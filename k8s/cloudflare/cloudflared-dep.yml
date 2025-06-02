@@ -58,5 +58,5 @@ data:
     no-autoupdate: true
     ingress:
     - hostname: home.husamalsheikh.info
-      service: http://nginx.default:80
+      service: http://homepage.default:3000
     - service: http_status:404
