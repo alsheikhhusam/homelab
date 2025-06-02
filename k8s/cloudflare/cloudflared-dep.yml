@@ -58,5 +58,5 @@ data:
     no-autoupdate: true
     ingress:
     - hostname: home.husamalsheikh.info
-      service: http://nginx-test.default.svc.cluster.local:80
+      service: http://nginx.default:80
     - service: http_status:404
