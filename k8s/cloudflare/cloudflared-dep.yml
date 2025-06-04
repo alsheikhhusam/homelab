@@ -46,19 +46,3 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cloudflared
-  namespace: cloudflare
-data:
-  config.yaml: |
-    tunnel: homelab
-    credentials-file: /etc/cloudflared/creds/credentials.json
-    metrics: 0.0.0.0:2000
-    no-autoupdate: true
-    ingress:
-    - hostname: home.husamalsheikh.info
-      service: http://homepage.homepage:3000
-    - service: http_status:404
