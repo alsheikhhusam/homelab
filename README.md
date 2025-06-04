@@ -33,6 +33,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | <img src="https://grafana.com/static/assets/img/fav32.png" width="20"> | [**Grafana**](https://grafana.com/) | Monitoring and observability dashboard |
 | <img src="https://github.com/user-attachments/assets/9898e44d-054a-40f2-9281-cc64b5e98d07" width="20"> | [**Prometheus**](https://prometheus.io/) | Metrics collection and alerting |
 | <img src="https://grafana.com/media/docs/loki/logo-grafana-loki.png" width="20"> | [**Loki**](https://grafana.com/oss/loki/) | Log aggregation system |
+| <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
 
 ### Infrastructure
 
