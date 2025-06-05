@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        env:
+        - name: POSTGRES_DB
+          value: nextcloud
+        - name: POSTGRES_USER
+          value: nextcloud
+        - name: POSTGRES_PASSWORD
+          value: your-strong-password-here  # Change this!
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-pv
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-pv
+        persistentVolumeClaim:
+          claimName: nextcloud-postgres-pvc
