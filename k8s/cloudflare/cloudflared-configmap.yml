@@ -10,12 +10,19 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
+    - hostname: next.husamalsheikh.info
+      service: http://nextcloud.nextcloud.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: next.husamalsheikh.info
+        originServerName: next.husamalsheikh.info
     - hostname: home.husamalsheikh.info
       service: http://homepage.homepage:3000
       originRequest:
-      noTLSVerify: true
-      connectTimeout: 30s
-      httpHostHeader: home.husamalsheikh.info
-      originServerName: home.husamalsheikh.info
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: home.husamalsheikh.info
+        originServerName: home.husamalsheikh.info
       disableChunkedEncoding: true
     - service: http_status:404
