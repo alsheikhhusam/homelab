@@ -30,10 +30,14 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Logo | Name | Description |
 |------|------|-------------|
 | <img src="https://camo.githubusercontent.com/1822c165e7941a2c1cbc126f8b3ae81a6853069ff748daa8a60abbf0d5d34180/68747470733a2f2f7777772e7376677265706f2e636f6d2f646f776e6c6f61642f3439393830372f686f6d652d706167652e737667" width="20"> | [**Homepage**](https://gethomepage.dev/) | Custom dashboard for homelab management |
+| <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
+
+### Telemetry
+| Logo | Name | Description |
+|------|------|-------------|
 | <img src="https://grafana.com/static/assets/img/fav32.png" width="20"> | [**Grafana**](https://grafana.com/) | Monitoring and observability dashboard |
 | <img src="https://github.com/user-attachments/assets/9898e44d-054a-40f2-9281-cc64b5e98d07" width="20"> | [**Prometheus**](https://prometheus.io/) | Metrics collection and alerting |
 | <img src="https://grafana.com/media/docs/loki/logo-grafana-loki.png" width="20"> | [**Loki**](https://grafana.com/oss/loki/) | Log aggregation system |
-| <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
 
 ### Infrastructure
 
