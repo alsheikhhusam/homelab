@@ -46,15 +46,8 @@ spec:
         ports:
         - containerPort: 80
         volumeMounts:
-        - mountPath: /var/www/html/data
+        - mountPath: /var/www/html
           name: nextcloud-storage
-          subPath: data
-        - mountPath: /var/www/html/config
-          name: nextcloud-storage
-          subPath: config
-        - mountPath: /var/www/html/apps
-          name: nextcloud-storage
-          subPath: apps
       volumes:
       - name: nextcloud-storage
         persistentVolumeClaim:

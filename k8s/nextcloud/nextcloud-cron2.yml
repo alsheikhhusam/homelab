@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-cron-mimetype
+  namespace: nextcloud
+spec:
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          containers:
+          - name: nextcloud-maintenance
+            image: alpine/k8s:1.24.7
+            command: ["/bin/sh", "-c"]
+            args:
+              - |
+                set -e
+
+                NEXTCLOUD_POD=$(kubectl get pods -n nextcloud -o name | grep '^pod/nextcloud-' | grep -v 'nextcloud-cron-' | head -n 1 | sed 's/^pod\///')
+
+                if [ -z "$NEXTCLOUD_POD" ]; then
+                  echo "Error: Nextcloud pod not found with prefix 'nextcloud-' excluding 'nextcloud-cron-' in namespace nextcloud."
+                  exit 1
+                fi
+
+                echo "Executing occ maintenance:repair --include-expensive on pod: $NEXTCLOUD_POD"
+
+                kubectl exec -it -n nextcloud "$NEXTCLOUD_POD" -- su -s /bin/bash www-data -c "php /var/www/html/occ maintenance:repair --include-expensive"
+
+                echo "Maintenance command executed successfully."
+            env:
+              - name: PHP_MEMORY_LIMIT
+                value: "256M"
+          restartPolicy: OnFailure
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+
