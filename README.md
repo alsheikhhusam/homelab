@@ -19,7 +19,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Kubernetes         | K3s single-node cluster |
 | Ingress            | Cloudflare Tunnel in-cluster |
 | Authentication     | Cloudflare Access |
-| Dashboard          | [Homepage](https://gethomepage.dev/) |
+| Dashboard          | Homepage |
 | Monitoring         | Prometheus + Grafana |
 | Logging            | Loki + Promtail |
 
