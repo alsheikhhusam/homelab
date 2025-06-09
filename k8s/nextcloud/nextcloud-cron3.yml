@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-cron-missing-indices
+  namespace: nextcloud
+spec:
+  schedule: "0 1 * * 1"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: cron-runner
+            image: nextcloud:latest
+            args: 
+              - |
+                set -e
+
+                NEXTCLOUD_POD=$(kubectl get pods -n nextcloud -o name | grep '^pod/nextcloud-' | grep -v 'nextcloud-cron-' | head -n 1 | sed 's/^pod\///')
+
+                if [ -z "$NEXTCLOUD_POD" ]; then
+                  echo "Error: Nextcloud pod not found with prefix 'nextcloud-' excluding 'nextcloud-cron-' in namespace nextcloud."
+                  exit 1
+                fi
+
+                echo "Executing occ db:add-missing-indices on pod: $NEXTCLOUD_POD"
+
+                kubectl exec -it -n nextcloud "$NEXTCLOUD_POD" -- su -s /bin/bash www-data -c "php /var/www/html/occ db:add-missing-indices"
+
+                echo "occ db:add-missing-indices command executed successfully."
+            volumeMounts:
+            - name: nextcloud-storage
+              mountPath: /var/www/html
+          volumes:
+          - name: nextcloud-storage
+            persistentVolumeClaim:
+              claimName: nextcloud-pvc
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1

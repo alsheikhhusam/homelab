@@ -34,6 +34,6 @@ spec:
               - name: PHP_MEMORY_LIMIT
                 value: "256M"
           restartPolicy: OnFailure
-  successfulJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
 

@@ -27,5 +27,5 @@ spec:
           - name: nextcloud-storage
             persistentVolumeClaim:
               claimName: nextcloud-pvc
-  successfulJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
