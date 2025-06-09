@@ -14,8 +14,9 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: cron-runner
-            image: nextcloud:latest
-            args: 
+            image: alpine/k8s:1.24.7
+            command: ["/bin/sh", "-c"]
+            args:
               - |
                 set -e
 
