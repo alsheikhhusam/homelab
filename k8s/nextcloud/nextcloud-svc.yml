@@ -4,9 +4,9 @@ metadata:
   name: nextcloud
   namespace: nextcloud
 spec:
-  type: ClusterIP
-  ports:
-  - port: 80
-    targetPort: 80
   selector:
     app: nextcloud
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

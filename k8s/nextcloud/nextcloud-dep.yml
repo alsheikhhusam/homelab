@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: nextcloud
   namespace: nextcloud
+
 spec:
   replicas: 1
   selector:
@@ -18,19 +19,35 @@ spec:
         image: nextcloud:latest
         env:
         - name: POSTGRES_HOST
-          value: postgresql
+          value: "postgres.nextcloud.svc.cluster.local"
         - name: POSTGRES_DB
-          value: nextcloud
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_DB
         - name: POSTGRES_USER
-          value: nextcloud
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
-          value: your-strong-password # change this!!!
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
         ports:
         - containerPort: 80
         volumeMounts:
-        - name: nextcloud
-          mountPath: /var/www/html
+        - mountPath: /var/www/html/data
+          name: nextcloud-storage
+          subPath: data
+        - mountPath: /var/www/html/config
+          name: nextcloud-storage
+          subPath: config
+        - mountPath: /var/www/html/apps
+          name: nextcloud-storage
+          subPath: apps
       volumes:
-      - name: nextcloud
+      - name: nextcloud-storage
         persistentVolumeClaim:
           claimName: nextcloud-pvc

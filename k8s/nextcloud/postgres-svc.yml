@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: postgres
   namespace: nextcloud
+
 spec:
-  type: ClusterIP
-  ports:
-  - port: 5432
-    targetPort: 5432
   selector:
     app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
