@@ -18,7 +18,7 @@ spec:
               - |
                 set -e
 
-                NEXTCLOUD_POD=$(kubectl get pods -n nextcloud -o name | grep '^pod/nextcloud-' | grep -v 'nextcloud-cron-' | head -n 1 | sed 's/^pod\///')
+                NEXTCLOUD_POD=$(kubectl get pods -n nextcloud -o json | jq -r '.items[] | select(.metadata.name | test("^nextcloud-") and (._metadata.name | test("nextcloud-cron-") | not)) | .metadata.name' | head -n 1)
 
                 if [ -z "$NEXTCLOUD_POD" ]; then
                   echo "Error: Nextcloud pod not found with prefix 'nextcloud-' excluding 'nextcloud-cron-' in namespace nextcloud."
