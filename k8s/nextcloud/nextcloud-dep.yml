@@ -48,7 +48,13 @@ spec:
         volumeMounts:
         - mountPath: /var/www/html
           name: nextcloud-storage
+        - mountPath: /usr/local/etc/php/conf.d/opcache.ini
+          subPath: opcache.ini
+          name: opcache-config
       volumes:
       - name: nextcloud-storage
         persistentVolumeClaim:
           claimName: nextcloud-pvc
+      - name: opcache-config
+        configMap:
+          name: nextcloud-opcache
