@@ -11,7 +11,7 @@ spec:
       template:
         spec:
           containers:
-          - name: nextcloud-maintenance
+          - name: cron-runner
             image: alpine/k8s:1.24.7
             command: ["/bin/sh", "-c"]
             args:
