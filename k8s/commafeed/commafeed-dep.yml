@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commafeed
+  namespace: commafeed
+
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: commafeed
+  template:
+    metadata:
+      labels:
+        app: commafeed
+    spec:
+      containers:
+      - name: commafeed
+        image: athou/commafeed:latest-h2
+        ports:
+        - containerPort: 8082
+        volumeMounts:
+        - name: commafeed
+          mountPath: /mnt/data/commafeed
+      volumes:
+      - name: commafeed
+        persistentVolumeClaim:
+          claimName: commafeed-pvc
