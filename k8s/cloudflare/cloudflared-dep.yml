@@ -9,6 +9,7 @@ spec:
     matchLabels:
       app: cloudflared
   replicas: 1
+  revisionHistoryLimit: 0
   template:
     metadata:
       labels:

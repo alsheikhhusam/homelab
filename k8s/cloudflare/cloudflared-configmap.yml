@@ -10,6 +10,13 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
+    - hostname: grafana.husamalsheikh.info
+      service: http://grafana.telemetry.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: grafana.husamalsheikh.info
+        originServerName: grafana.husamalsheikh.info
     - hostname: feed.husamalsheikh.info
       service: http://commafeed.commafeed.svc.cluster.local:80
       originRequest:
