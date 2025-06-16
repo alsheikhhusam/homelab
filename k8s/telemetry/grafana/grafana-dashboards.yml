@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: telemetry
+data:
+  default-dashboard.json: |-
+    {
+      "title": "Default Dashboard",
+      "tags": ["templated"],
+      "timezone": "browser",
+      "editable": true,
+      "panels": [],
+      "schemaVersion": 22
+    }
