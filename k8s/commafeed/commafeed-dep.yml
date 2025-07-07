@@ -17,9 +17,12 @@ spec:
     spec:
       containers:
       - name: commafeed
-        image: athou/commafeed:latest-h2
+        image: athou/commafeed:master-postgresql
         ports:
         - containerPort: 8082
+        envFrom:
+        - secretRef:
+            name: commafeed-secret
         volumeMounts:
         - name: commafeed
           mountPath: /mnt/data/commafeed
