@@ -14,10 +14,20 @@ spec:
     metadata:
       labels:
         app: commafeed
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8082"
     spec:
       containers:
       - name: commafeed
         image: athou/commafeed:master-postgresql
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         ports:
         - containerPort: 8082
         envFrom:
