@@ -9,10 +9,10 @@ data:
     datasources:
     - name: Prometheus
       type: prometheus
-      url: http://prometheus.monitoring.svc.cluster.local:9090
+      url: http://prometheus.telemetry.svc.cluster.local:9090
       access: proxy
       isDefault: true
     - name: Loki
       type: loki
-      url: http://loki.monitoring.svc.cluster.local:3100
+      url: http://loki.telemetry.svc.cluster.local:3100
       access: proxy
