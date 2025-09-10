@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: taiga-backend
+  namespace: taiga
+
+spec:
+  selector:
+    app: taiga-backend
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
