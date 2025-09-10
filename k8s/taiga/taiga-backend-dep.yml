@@ -30,26 +30,10 @@ spec:
             memory: 1Gi
         ports:
           - containerPort: 8000
-        env:
-        - name: POSTGRES_PORT
-          value: "5432"
-        - name: POSTGRES_HOST
-          value: "postgres.taiga.svc.cluster.local"
-        - name: POSTGRES_DB
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_DB
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_USER
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_PASSWORD
         envFrom:
           - configMapRef:
               name: taiga-config
+          - secretRef:
+              name: postgres-secret
+          - secretRef:
+              name: taiga-secret
