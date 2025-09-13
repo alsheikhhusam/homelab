@@ -10,6 +10,13 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
+    - hostname: taiga.husamalsheikh.info
+      service: http://taiga-frontend.taiga.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: taiga.husamalsheikh.info
+        originServerName: taiga.husamalsheikh.info
     - hostname: grafana.husamalsheikh.info
       service: http://grafana.telemetry.svc.cluster.local:80
       originRequest:
@@ -38,5 +45,13 @@ data:
         connectTimeout: 30s
         httpHostHeader: home.husamalsheikh.info
         originServerName: home.husamalsheikh.info
+      disableChunkedEncoding: true
+    - hostname: husamalsheikh.info
+      service: http://portfolio.portfolio:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: husamalsheikh.info
+        originServerName: husamalsheikh.info
       disableChunkedEncoding: true
     - service: http_status:404
