@@ -21,6 +21,7 @@ spec:
       containers:
       - name: taiga-backend
         image: taigaio/taiga-back:latest
+          # command: ["/bin/sh", "-c", "chown -R taiga:taiga /taiga-back && exec /opt/venv/bin/gunicorn taiga.wsgi --bind 0.0.0.0:8000"]
         resources:
           requests:
             cpu: 250m

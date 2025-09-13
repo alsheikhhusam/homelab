@@ -7,7 +7,6 @@ metadata:
 spec:
   selector:
     app: taiga-backend
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 8000

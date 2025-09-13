@@ -5,5 +5,6 @@ metadata:
   namespace: taiga
 
 data:
-  REDIS_URL: "http://redis.taiga.svc.cluster.local:80"
-  TAIGA_URL: "http://taiga.taiga.svc.cluster.local:80"
+  REDIS_URL: "http://taiga-redis.taiga.svc.cluster.local:6379"
+  TAIGA_URL: "http://taiga.husamalsheikh.info"
+  PUBLIC_REGISTER_ENABLED: "true"
