@@ -10,13 +10,13 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
-    - hostname: taiga.husamalsheikh.info
-      service: http://taiga-frontend.taiga.svc.cluster.local:80
+    - hostname: planka.husamalsheikh.info
+      service: http://planka.planka.svc.cluster.local:1337
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: taiga.husamalsheikh.info
-        originServerName: taiga.husamalsheikh.info
+        httpHostHeader: planka.husamalsheikh.info
+        originServerName: planka.husamalsheikh.info
     - hostname: grafana.husamalsheikh.info
       service: http://grafana.telemetry.svc.cluster.local:80
       originRequest:
