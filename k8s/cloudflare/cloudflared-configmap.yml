@@ -10,48 +10,48 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
-    - hostname: planka.husamalsheikh.info
+    - hostname: planka.husamalsheikh.com
       service: http://planka.planka.svc.cluster.local:1337
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: planka.husamalsheikh.info
-        originServerName: planka.husamalsheikh.info
-    - hostname: grafana.husamalsheikh.info
+        httpHostHeader: planka.husamalsheikh.com
+        originServerName: planka.husamalsheikh.com
+    - hostname: grafana.husamalsheikh.com
       service: http://grafana.telemetry.svc.cluster.local:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: grafana.husamalsheikh.info
-        originServerName: grafana.husamalsheikh.info
-    - hostname: feed.husamalsheikh.info
+        httpHostHeader: grafana.husamalsheikh.com
+        originServerName: grafana.husamalsheikh.com
+    - hostname: feed.husamalsheikh.com
       service: http://commafeed.commafeed.svc.cluster.local:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: feed.husamalsheikh.info
-        originServerName: feed.husamalsheikh.info
-    - hostname: next.husamalsheikh.info
+        httpHostHeader: feed.husamalsheikh.com
+        originServerName: feed.husamalsheikh.com
+    - hostname: next.husamalsheikh.com
       service: http://nextcloud.nextcloud.svc.cluster.local:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: next.husamalsheikh.info
-        originServerName: next.husamalsheikh.info
-    - hostname: home.husamalsheikh.info
+        httpHostHeader: next.husamalsheikh.com
+        originServerName: next.husamalsheikh.com
+    - hostname: home.husamalsheikh.com
       service: http://homepage.homepage:3000
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: home.husamalsheikh.info
-        originServerName: home.husamalsheikh.info
+        httpHostHeader: home.husamalsheikh.com
+        originServerName: home.husamalsheikh.com
       disableChunkedEncoding: true
-    - hostname: husamalsheikh.info
+    - hostname: husamalsheikh.com
       service: http://portfolio.portfolio:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
-        httpHostHeader: husamalsheikh.info
-        originServerName: husamalsheikh.info
+        httpHostHeader: husamalsheikh.com
+        originServerName: husamalsheikh.com
       disableChunkedEncoding: true
     - service: http_status:404
