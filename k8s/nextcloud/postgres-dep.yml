@@ -44,8 +44,10 @@ spec:
         - containerPort: 5432
         volumeMounts:
         - name: postgres-data
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/postgresql/
+          mountPropagation: HostToContainer
       volumes:
       - name: postgres-data
-        persistentVolumeClaim:
-          claimName: postgres-pvc
+        hostPath:
+          path: /mnt/data/nextcloud-postgres
+          type: Directory
