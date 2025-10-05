@@ -23,8 +23,12 @@ spec:
       containers:
       - name: portfolio
         image: ghcr.io/alsheikhhusam/portfolio:latest
+        imagePullPolicy: Always
         command: ["npx"]
         args: ["next", "start", "-H", "0.0.0.0", "-p", "3000"]
+        envFrom:
+            - secretRef:
+                name: portfolio-smtp-creds
         resources:
           requests:
             cpu: "500m"

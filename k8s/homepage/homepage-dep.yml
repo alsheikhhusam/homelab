@@ -38,7 +38,7 @@ spec:
               memory: 1024Mi
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
-              value: home.husamalsheikh.info
+              value: home.husamalsheikh.com
           ports:
             - name: http
               containerPort: 3000
