@@ -21,6 +21,13 @@ spec:
       containers:
       - name: commafeed
         image: athou/commafeed:master-postgresql
+        env:
+          - name: COMMAFEED_UNREADSTATUSMAXAGEDAYS
+            value: "7"
+          - name: COMMAFEED_MAXENTRIESAGEDAYS
+            value: "3"
+          - name: COMMAFEED_FEED_MAXCAPACITY
+            value: "200"
         resources:
           requests:
             cpu: 250m

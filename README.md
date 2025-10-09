@@ -46,7 +46,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 |------|------|-------------|
 | <img src="https://github.com/user-attachments/assets/a838541b-c3be-4077-a74a-564ae9b91ed9" width="20"> | [**K3s**](https://k3s.io/) | Lightweight Kubernetes distribution |
 | <img src="https://www.cloudflare.com/favicon.ico" width="20"> | [**Cloudflare Tunnel**](https://www.cloudflare.com/products/tunnel/) | Secure ingress without public IP |
-| <img src="https://imgur.com/a/XRpqROy" width="20"> | [**Cloudflare Zero Trust**](https://developers.cloudflare.com/cloudflare-one/) | Secure site authentication |
+| <img src="https://www.cloudflare.com/favicon.ico" width="20"> | [**Cloudflare Zero Trust**](https://developers.cloudflare.com/cloudflare-one/) | Secure site authentication |
 | <img src="https://www.postgresql.org/favicon.ico" width="20"> | [**PostgreSQL**](https://www.postgresql.org/) | Relational database for applications |
 
 ### Planned Services
