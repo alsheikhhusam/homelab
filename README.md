@@ -33,6 +33,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
 | <img src="https://download.logo.wine/logo/CommaFeed/CommaFeed-Logo.wine.png" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
 | <img src="https://planka.app/cms-content/1/uploads/site/sitelogomenue.png?p=68e7ad5eeda1f" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2023_Obsidian_logo.svg/330px-2023_Obsidian_logo.svg.png" width="20"> | [**Obsidian**](https://obsidian.md) | Note Taking
 
 ### Telemetry
 | Logo | Name | Description |
