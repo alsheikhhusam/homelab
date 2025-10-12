@@ -25,7 +25,7 @@ data:
         httpHostHeader: planka.husamalsheikh.com
         originServerName: planka.husamalsheikh.com
     - hostname: grafana.husamalsheikh.com
-      service: http://grafana.telemetry.svc.cluster.local:80
+      service: http://prometheus-grafana.telemetry.svc.cluster.local:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
