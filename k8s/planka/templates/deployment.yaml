@@ -129,20 +129,11 @@ spec:
               {{- end }}
             - name: TRUST_PROXY
               value: "true"
-            {{- if .Values.existingAdminCredsSecret }}
             - name: DEFAULT_ADMIN_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.existingAdminCredsSecret }}
-                  key: email
-              # value: {{ .Values.admin_email }}
+              value: {{ .Values.admin_email }}
             - name: DEFAULT_ADMIN_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.existingAdminCredsSecret }}
-                  key: name
-              # value: {{ .Values.admin_name }}
-            # {{- if .Values.existingAdminCredsSecret }}
+              value: {{ .Values.admin_name }}
+            {{- if .Values.existingAdminCredsSecret }}
             - name: DEFAULT_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
