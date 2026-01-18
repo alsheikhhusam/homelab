@@ -447,7 +447,7 @@ externalDatabase:
   type: postgresql
 
   ## Database host. You can optionally include a colon delimited port like "myhost:1234"
-  host: ""
+  host: "nextcloud-postgresql:5432"
 
   ## Database user
   user: nextcloud
@@ -461,7 +461,7 @@ externalDatabase:
   ## Use a existing secret
   existingSecret:
     enabled: true
-    secretName: nameofsecret
+    secretName: postgres
     usernameKey: db-username
     passwordKey: db-password
     # hostKey: db-hostname-or-ip
@@ -521,7 +521,7 @@ postgresql:
     postgresql:
       # global.postgresql.auth overrides postgresql.auth
       auth:
-        username: nextcloud
+        username: admin
         password: changeme
         database: nextcloud
         # Name of existing secret to use for PostgreSQL credentials.
@@ -531,7 +531,7 @@ postgresql:
         existingSecret: "postgres"
         # Names of keys in existing secret to use for PostgreSQL credentials
         secretKeys:
-          adminPasswordKey: "db-postgres-password"
+          adminPasswordKey: "postgres-password"
           userPasswordKey: "db-password"
           #replicationPasswordKey: ""
   primary:
