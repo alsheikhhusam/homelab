@@ -997,7 +997,7 @@ metrics:
     loadBalancerIP:
     annotations:
       prometheus.io/scrape: "true"
-      prometheus.io/port: "9205"
+      prometheus.io/port: "80"
     labels: {}
 
   # -- security context for the metrics CONTAINER in the pod
