@@ -537,7 +537,7 @@ postgresql:
   primary:
     persistence:
       enabled: true
-      size: 8Gi
+      size: 10Gi
       # Use an existing Persistent Volume Claim (must be created ahead of time)
       # existingClaim: ""
       # storageClass: ""
