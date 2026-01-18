@@ -123,7 +123,7 @@ phpClientHttpsFix:
 
 nextcloud:
   host: next.husamalsheikh.com
-  username: admin
+  username: nextcloud
   password: changeme
   ## Use an existing secret
   existingSecret:
@@ -245,7 +245,7 @@ nextcloud:
     # Apps directory configs
     apps.config.php: true
     # Used for auto configure database
-    autoconfig.php: true
+    autoconfig.php: false
     # Redis default configuration
     redis.config.php: true
     # Reverse proxy default configuration
@@ -263,7 +263,14 @@ nextcloud:
 
   # Extra config files created in /var/www/html/config/
   # ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html#multiple-config-php-file
-  configs: {}
+  configs:
+    reverse-proxy-override.config.php: |-
+      <?php
+      $CONFIG = array (
+        'overwriteprotocol' => 'https',
+        'overwritehost' => 'next.husamalsheikh.com',
+        'overwrite.cli.url' => 'https://next.husamalsheikh.com',
+      );
   # For example, to enable image and text file previews:
   #  previews.config.php: |-
   #    <?php
@@ -343,17 +350,17 @@ nextcloud:
   # Set securityContext parameters for the nextcloud CONTAINER only (will not affect nginx container).
   # For example, you may need to define runAsNonRoot directive
   securityContext: {}
-  #   runAsUser: 33
-  #   runAsGroup: 33
-  #   runAsNonRoot: true
-  #   readOnlyRootFilesystem: false
+    # runAsUser: 33
+    # runAsGroup: 33
+    # runAsNonRoot: true
+    # readOnlyRootFilesystem: false
 
   # Set securityContext parameters for the entire pod. For example, you may need to define runAsNonRoot directive
   podSecurityContext: {}
-  #   runAsUser: 33
-  #   runAsGroup: 33
-  #   runAsNonRoot: true
-  #   readOnlyRootFilesystem: false
+    # runAsUser: 33
+    # runAsGroup: 33
+    # runAsNonRoot: true
+    # readOnlyRootFilesystem: false
 
   # Settings for the MariaDB init container
   mariaDbInitContainer:
@@ -456,7 +463,7 @@ externalDatabase:
   password: ""
 
   ## Database name
-  database: nextcloud
+  database: nextclouddb
 
   ## Use a existing secret
   existingSecret:
@@ -521,9 +528,9 @@ postgresql:
     postgresql:
       # global.postgresql.auth overrides postgresql.auth
       auth:
-        username: admin
-        password: changeme
-        database: nextcloud
+        username: nextcloud
+        # password: changeme
+        database: nextclouddb
         # Name of existing secret to use for PostgreSQL credentials.
         # auth.postgresPassword, auth.password, and auth.replicationPassword will be ignored and picked up from this secret.
         # secret might also contains the key ldap-password if LDAP is enabled.
@@ -817,24 +824,24 @@ priorityClassName: ""
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 10
+  initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 10
+  initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
 startupProbe:
-  enabled: false
+  enabled: true
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
-  failureThreshold: 30
+  failureThreshold: 60
   successThreshold: 1
 
 ## Enable pod autoscaling using HorizontalPodAutoscaler
