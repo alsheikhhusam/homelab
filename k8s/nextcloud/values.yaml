@@ -941,7 +941,7 @@ imaginary:
 ## Prometheus Exporter / Metrics
 ##
 metrics:
-  enabled: false
+  enabled: true
 
   replicaCount: 1
   # Optional: becomes NEXTCLOUD_SERVER env var in the nextcloud-exporter container.
