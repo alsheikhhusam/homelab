@@ -537,7 +537,7 @@ postgresql:
   primary:
     persistence:
       enabled: true
-      size: 5Gi
+      size: 8Gi
       # Use an existing Persistent Volume Claim (must be created ahead of time)
       # existingClaim: ""
       # storageClass: ""
@@ -761,7 +761,7 @@ service:
 ##
 persistence:
   # Nextcloud Data (/var/www/html)
-  enabled: false
+  enabled: true
   annotations: {}
   labels: {}
   ## nextcloud data Persistent Volume Storage Class
@@ -779,7 +779,7 @@ persistence:
   # existingClaim:
 
   accessMode: ReadWriteOnce
-  size: 8Gi
+  size: 10Gi
 
   ## Use an additional pvc for the data directory rather than a subpath of the default PVC
   ## Useful to store data on a different storageClass (e.g. on slower disks)
