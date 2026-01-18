@@ -122,15 +122,15 @@ phpClientHttpsFix:
   protocol: https
 
 nextcloud:
-  host: nextcloud.kube.home
+  host: next.husamalsheikh.com
   username: admin
   password: changeme
   ## Use an existing secret
   existingSecret:
-    enabled: false
-    # secretName: nameofsecret
-    usernameKey: nextcloud-username
-    passwordKey: nextcloud-password
+    enabled: true
+    secretName: nextcloud
+    usernameKey: username
+    passwordKey: password
     tokenKey: ""
     smtpUsernameKey: smtp-username
     smtpPasswordKey: smtp-password
@@ -142,7 +142,9 @@ nextcloud:
   persistence:
     subPath:
   # if set, we'll template this list to the NEXTCLOUD_TRUSTED_DOMAINS env var
-  trustedDomains: []
+  trustedDomains:
+    - next.husamalsheikh.com
+    - nextcloud.nextcloud.svc.cluster.local
   ## SMTP configuration
   mail:
     enabled: false
@@ -432,7 +434,7 @@ nginx:
   #    value: ENV_VALUE
 
 internalDatabase:
-  enabled: true
+  enabled: false
   name: nextcloud
 
 ##
@@ -511,7 +513,7 @@ mariadb:
 ## for more options see https://github.com/bitnami/charts/tree/main/bitnami/postgresql
 ##
 postgresql:
-  enabled: false
+  enabled: true
   image:
     registry: docker.io
     repository: bitnamilegacy/postgresql
@@ -526,15 +528,16 @@ postgresql:
         # auth.postgresPassword, auth.password, and auth.replicationPassword will be ignored and picked up from this secret.
         # secret might also contains the key ldap-password if LDAP is enabled.
         # ldap.bind_password will be ignored and picked from this secret in this case.
-        existingSecret: ""
+        existingSecret: "postgres"
         # Names of keys in existing secret to use for PostgreSQL credentials
         secretKeys:
-          adminPasswordKey: ""
-          userPasswordKey: ""
-          replicationPasswordKey: ""
+          adminPasswordKey: "db-password"
+          userPasswordKey: "db-username"
+          #replicationPasswordKey: ""
   primary:
     persistence:
-      enabled: false
+      enabled: true
+      size: 5Gi
       # Use an existing Persistent Volume Claim (must be created ahead of time)
       # existingClaim: ""
       # storageClass: ""
