@@ -1121,4 +1121,89 @@ securityContext: {}
 #       name: my-ingressroute
 #     spec:
 #       ...
-extraManifests: []
+extraManifests:
+  - |
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: nextcloud-cron-maintenance
+      namespace: nextcloud
+    spec:
+      schedule: "*/5 * * * *"   # Every 5 minutes
+      concurrencyPolicy: Forbid
+      successfulJobsHistoryLimit: 1
+      failedJobsHistoryLimit: 1
+      jobTemplate:
+        spec:
+          ttlSecondsAfterFinished: 3600
+          template:
+            spec:
+              restartPolicy: OnFailure
+              containers:
+              - name: cron-runner
+                image: nextcloud:latest
+                command: 
+                  - /bin/sh
+                  - -c
+                  - |
+                    su - www-data -s /bin/sh -c 'php -f /var/www/html/cron.php'
+                volumeMounts:
+                - name: nextcloud-storage
+                  mountPath: /var/www/html
+              volumes:
+              - name: nextcloud-storage
+                persistentVolumeClaim:
+                  claimName: nextcloud-pvc
+
+  - |
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: nextcloud-cron-maintenance
+      namespace: nextcloud
+      labels:
+        app.kubernetes.io/instance: nextcloud
+        app.kubernetes.io/name: nextcloud
+    spec:
+      schedule: "0 1 * * *" # Daily at 1:00 AM
+      concurrencyPolicy: Forbid
+      successfulJobsHistoryLimit: 1
+      failedJobsHistoryLimit: 1
+      jobTemplate:
+        spec:
+          ttlSecondsAfterFinished: 3600
+          template:
+            spec:
+              restartPolicy: OnFailure
+              containers:
+                - name: cron-runner
+                  image: alpine/k8s:1.24.7
+                  command: ["/bin/sh", "-c"]
+                  args:
+                    - |
+                      set -euo pipefail
+
+                      NEXTCLOUD_POD=$(
+                        kubectl get pods -n nextcloud -o name \
+                          | grep '^pod/nextcloud-' \
+                          | grep -v 'nextcloud-cron-' \
+                          | head -n 1 \
+                          | sed 's#^pod/##'
+                      )
+
+                      if [ -z "${NEXTCLOUD_POD}" ]; then
+                        echo "Error: Nextcloud pod not found in namespace nextcloud."
+                        exit 1
+                      fi
+
+                      echo "Using Nextcloud pod: ${NEXTCLOUD_POD}"
+
+                      echo "1) Running: occ db:add-missing-indices"
+                      kubectl exec -n nextcloud "${NEXTCLOUD_POD}" -- \
+                        su -s /bin/bash www-data -c "php /var/www/html/occ db:add-missing-indices"
+
+                      echo "2) Running: occ maintenance:repair --include-expensive"
+                      kubectl exec -n nextcloud "${NEXTCLOUD_POD}" -- \
+                        su -s /bin/bash www-data -c "php /var/www/html/occ maintenance:repair --include-expensive"
+
+                      echo "Done."
