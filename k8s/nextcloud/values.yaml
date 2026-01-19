@@ -1123,46 +1123,10 @@ securityContext: {}
 #       ...
 extraManifests:
   - |
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: nextcloud-maintenance
-      namespace: nextcloud
-
-  - |
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: Role
-    metadata:
-      name: nextcloud-maintenance
-      namespace: nextcloud
-    rules:
-      - apiGroups: [""]
-        resources: ["pods"]
-        verbs: ["get", "list"]
-      - apiGroups: [""]
-        resources: ["pods/exec"]
-        verbs: ["create"]
-
-  - |
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: RoleBinding
-    metadata:
-      name: nextcloud-maintenance
-      namespace: nextcloud
-    subjects:
-      - kind: ServiceAccount
-        name: nextcloud-maintenance
-        namespace: nextcloud
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: Role
-      name: nextcloud-maintenance
-
-  - |
     apiVersion: batch/v1
     kind: CronJob
     metadata:
-      name: nextcloud-cron-maintenance
+      name: nextcloud-cron-maintenance1
       namespace: nextcloud
     spec:
       schedule: "*/5 * * * *"   # Every 5 minutes
@@ -1174,6 +1138,7 @@ extraManifests:
           ttlSecondsAfterFinished: 3600
           template:
             spec:
+              serviceAccountName: nextcloud-maintenance
               restartPolicy: OnFailure
               containers:
               - name: cron-runner
@@ -1195,7 +1160,7 @@ extraManifests:
     apiVersion: batch/v1
     kind: CronJob
     metadata:
-      name: nextcloud-cron-maintenance
+      name: nextcloud-cron-maintenance2
       namespace: nextcloud
       labels:
         app.kubernetes.io/instance: nextcloud
@@ -1210,6 +1175,7 @@ extraManifests:
           ttlSecondsAfterFinished: 3600
           template:
             spec:
+              serviceAccountName: nextcloud-maintenance
               restartPolicy: OnFailure
               containers:
                 - name: cron-runner
