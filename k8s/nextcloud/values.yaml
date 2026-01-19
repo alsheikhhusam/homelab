@@ -267,7 +267,7 @@ nextcloud:
     maintenance-window.config.php: |-
       <?php
       $CONFIG = array (
-        'maintenance_window_start' => 1,
+        'maintenance_window_start' => 3,
       );
     reverse-proxy-override.config.php: |-
       <?php
