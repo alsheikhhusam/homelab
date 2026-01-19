@@ -1129,7 +1129,7 @@ extraManifests:
       name: nextcloud-cron-maintenance1
       namespace: nextcloud
     spec:
-      schedule: "*/5 * * * *"   # Every 5 minutes
+      schedule: "*/5 * * * *"
       concurrencyPolicy: Forbid
       successfulJobsHistoryLimit: 1
       failedJobsHistoryLimit: 1
@@ -1142,19 +1142,28 @@ extraManifests:
               restartPolicy: OnFailure
               containers:
               - name: cron-runner
-                image: nextcloud:latest
-                command: 
-                  - /bin/sh
-                  - -c
+                image: alpine/k8s:1.24.7
+                command: ["/bin/sh","-c"]
+                args:
                   - |
-                    su - www-data -s /bin/sh -c 'php -f /var/www/html/cron.php'
-                volumeMounts:
-                - name: nextcloud-storage
-                  mountPath: /var/www/html
-              volumes:
-              - name: nextcloud-storage
-                persistentVolumeClaim:
-                  claimName: nextcloud-pvc
+                    set -e
+
+                    NEXTCLOUD_POD=$(
+                      kubectl get pods -n nextcloud -o name \
+                        | grep '^pod/nextcloud-' \
+                        | grep -v 'nextcloud-cron-' \
+                        | head -n 1 \
+                        | sed 's#^pod/##'
+                    )
+
+                    if [ -z "$NEXTCLOUD_POD" ]; then
+                      echo "Error: Nextcloud pod not found"
+                      exit 1
+                    fi
+
+                    echo "Running cron.php on pod: $NEXTCLOUD_POD"
+                    kubectl exec -n nextcloud "$NEXTCLOUD_POD" -- \
+                      su -s /bin/sh www-data -c "php -f /var/www/html/cron.php"
 
   - |
     apiVersion: batch/v1
@@ -1209,3 +1218,7 @@ extraManifests:
                         su -s /bin/bash www-data -c "php /var/www/html/occ maintenance:repair --include-expensive"
 
                       echo "Done."
+
+maintenanceRbac:
+  enabled: true
+  serviceAccountName: nextcloud-maintenance
