@@ -1085,6 +1085,11 @@ rbac:
 ## @param securityContext for nextcloud pod @deprecated Use `nextcloud.podSecurityContext` instead
 securityContext: {}
 
+## Maintenance RBAC for cronjobs and extra manifests
+maintenanceRbac:
+  enabled: true
+  serviceAccountName: nextcloud-maintenance
+
 # -- Allows users to inject additional Kubernetes manifests (YAML) to be rendered with the release.
 # Could either be a list or a map
 # If a map, each key is the name of the manifest.
@@ -1194,31 +1199,24 @@ extraManifests:
                     - |
                       set -euo pipefail
 
-                      NEXTCLOUD_POD=$(
-                        kubectl get pods -n nextcloud -o name \
-                          | grep '^pod/nextcloud-' \
-                          | grep -v 'nextcloud-cron-' \
-                          | head -n 1 \
-                          | sed 's#^pod/##'
-                      )
+                      NEXTCLOUD_POD=$(kubectl -n nextcloud get pod \
+                        -l app.kubernetes.io/name=nextcloud,app.kubernetes.io/instance=nextcloud,app.kubernetes.io/component=app \
+                        -o jsonpath='{.items[0].metadata.name}')
 
                       if [ -z "${NEXTCLOUD_POD}" ]; then
-                        echo "Error: Nextcloud pod not found in namespace nextcloud."
+                        echo "Error: Nextcloud pod not found"
+                        kubectl -n nextcloud get pods -o wide
                         exit 1
                       fi
 
                       echo "Using Nextcloud pod: ${NEXTCLOUD_POD}"
 
-                      echo "1) Running: occ db:add-missing-indices"
+                      echo "1) occ db:add-missing-indices"
                       kubectl exec -n nextcloud "${NEXTCLOUD_POD}" -- \
-                        su -s /bin/bash www-data -c "php /var/www/html/occ db:add-missing-indices"
+                        su -s /bin/sh www-data -c "php /var/www/html/occ db:add-missing-indices"
 
-                      echo "2) Running: occ maintenance:repair --include-expensive"
+                      echo "2) occ maintenance:repair --include-expensive"
                       kubectl exec -n nextcloud "${NEXTCLOUD_POD}" -- \
-                        su -s /bin/bash www-data -c "php /var/www/html/occ maintenance:repair --include-expensive"
+                        su -s /bin/sh www-data -c "php /var/www/html/occ maintenance:repair --include-expensive"
 
                       echo "Done."
-
-maintenanceRbac:
-  enabled: true
-  serviceAccountName: nextcloud-maintenance
