@@ -1,0 +1,43 @@
+{{- if .Values.maintenanceRbac.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.maintenanceRbac.serviceAccountName | default "nextcloud-maintenance" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.maintenanceRbac.serviceAccountName | default "nextcloud-maintenance" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/instance: {{ .Release.Name }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.maintenanceRbac.serviceAccountName | default "nextcloud-maintenance" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/instance: {{ .Release.Name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.maintenanceRbac.serviceAccountName | default "nextcloud-maintenance" }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Values.maintenanceRbac.serviceAccountName | default "nextcloud-maintenance" }}
+{{- end }}

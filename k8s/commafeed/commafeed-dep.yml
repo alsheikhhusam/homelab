@@ -21,13 +21,6 @@ spec:
       containers:
       - name: commafeed
         image: athou/commafeed:master-postgresql
-        env:
-          - name: COMMAFEED_UNREADSTATUSMAXAGEDAYS
-            value: "7"
-          - name: COMMAFEED_MAXENTRIESAGEDAYS
-            value: "3"
-          - name: COMMAFEED_FEED_MAXCAPACITY
-            value: "200"
         resources:
           requests:
             cpu: 250m
@@ -43,7 +36,13 @@ spec:
         volumeMounts:
         - name: commafeed
           mountPath: /mnt/data/commafeed
+        - name: config
+          mountPath: /commafeed/config
+          readOnly: true
       volumes:
       - name: commafeed
         persistentVolumeClaim:
           claimName: commafeed-pvc
+      - name: config
+        configMap:
+          name: commafeed
