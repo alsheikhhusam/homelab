@@ -1049,7 +1049,7 @@ externalRedis:
 # -- Bitnami PostgreSQL configuration
 postgresql:
   # -- Enable postgresql
-  enabled: false
+  enabled: true
   # -- Enable postgresql architecture.
   architecture: standalone
 
@@ -1075,12 +1075,13 @@ postgresql:
 
   # -- This is for setting up the auth.
   auth:
+    existingSecret: n8n
     # -- This is for setting up the auth username.
-    username: ""
+    username: "n8n"
     # -- This is for setting up the auth password.
     password: ""
     # -- The name of the PostgreSQL database. For more information: https://docs.n8n.io/hosting/configuration/supported-databases-settings/#required-permissions
-    database: "n8n"
+    database: "n8ndb"
 
 # -- External PostgreSQL parameters
 externalPostgresql:
