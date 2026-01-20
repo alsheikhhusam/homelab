@@ -346,9 +346,9 @@ main:
   # -- Persistence configuration for the main pod
   persistence:
     # -- Whether to enable persistence
-    enabled: false
+    enabled: true
     # -- Name of the volume to use for persistence
-    volumeName: ""
+    volumeName: "n8n-pv"
     # -- Existing claim to use for persistence
     existingClaim: ""
     # -- Mount path for persistence
@@ -360,7 +360,7 @@ main:
     # -- Access mode for persistence
     accessMode: ReadWriteOnce
     # -- Size for persistence
-    size: 8Gi
+    size: 5Gi
     # -- Annotations for persistence
     annotations:
       helm.sh/resource-policy: keep
@@ -856,10 +856,10 @@ workflowHistory:
 encryptionKey: ""
 
 # -- The name of an existing secret with encryption key. The secret must contain a key with the name N8N_ENCRYPTION_KEY.
-existingEncryptionKeySecret: ""
+existingEncryptionKeySecret: "n8n"
 
 # -- For instance, the Schedule node uses it to know at what time the workflow should start. Find you timezone from here: https://momentjs.com/timezone/
-timezone: "Europe/Berlin"
+timezone: "America/Detroit"
 
 # -- A locale identifier, compatible with the Accept-Language header. n8n doesn't support regional identifiers, such as de-AT.
 defaultLocale: en
