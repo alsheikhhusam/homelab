@@ -49,15 +49,15 @@ spec:
               name: http
           {{- if and .Values.probes.enabled .Values.probes.startup.enabled }}
           startupProbe:
-            {{- toYaml .Values.probes.startup | nindent 12 }}
+            {{- toYaml (omit .Values.probes.startup "enabled") | nindent 12 }}
           {{- end }}
 
           {{- if and .Values.probes.enabled .Values.probes.liveness.enabled }}
           livenessProbe:
-            {{- toYaml .Values.probes.liveness | nindent 12 }}
+            {{- toYaml (omit .Values.probes.liveness "enabled") | nindent 12 }}
           {{- end }}
 
           {{- if and .Values.probes.enabled .Values.probes.readiness.enabled }}
           readinessProbe:
-            {{- toYaml .Values.probes.readiness | nindent 12 }}
+            {{- toYaml (omit .Values.probes.readiness "enabled") | nindent 12 }}
           {{- end }}

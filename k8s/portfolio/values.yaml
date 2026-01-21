@@ -139,32 +139,32 @@ resources:
 probes:
   enabled: true
 
-  startupProbe:
+  startupP:
     enabled: true
     httpGet:
       path: /
       port: http
     periodSeconds: 5
-    timeOutSeconds: 2
+    timeoutSeconds: 2
     failureThreshold: 30
-    
-  livenessProbe:
+
+  liveness:
     enabled: true
     httpGet:
       path: /
       port: http
     periodSeconds: 10
-    timeOutSeconds: 2
+    timeoutSeconds: 2
     failureThreshold: 3
     initialDelaySeconds: 15
 
-  readinessProbe:
+  readiness:
     enabled: true
     httpGet:
       path: /
       port: http
     periodSeconds: 5
-    timeOutSeconds: 2
+    timeoutSeconds: 2
     failureThreshold: 3
     initialDelaySeconds: 5
 
