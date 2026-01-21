@@ -139,7 +139,7 @@ resources:
 probes:
   enabled: true
 
-  startupP:
+  startup:
     enabled: true
     httpGet:
       path: /
