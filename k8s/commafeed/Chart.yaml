@@ -1,6 +1,6 @@
 apiVersion: v2
-name: portfolio
-description: Portfolio Next.js app
+name: commafeed
+description: Google Reader inspired self-hosted RSS reader, based on Quarkus and React/TypeScript.
 
 # A chart can be either an 'application' or a 'library' chart.
 #

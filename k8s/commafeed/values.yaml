@@ -1,6 +1,9 @@
-# Default values for portfolio.
+# Default values for commafeed.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+# Set Namespace for the deployment more information can be found here: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+namespace: commafeed
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
@@ -12,29 +15,22 @@ revisionHistoryLimit: 1
 deploymentStrategy:
   type: RollingUpdate
 
-
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/alsheikhhusam/portfolio
+  repository: athou/commafeed
   # This sets the pull policy for images.
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "master-h2-jvm"
+
+containers:
+  - name: commafeed
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets:
-  - name: ghcr-secret
+imagePullSecrets: []
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
-
-command: ["npx"]
-args: ["next", "start", "-H", "0.0.0.0", "-p", "3000"]
-
-envFromSecret:
-  name: portfolio-smtp-creds
-
-containerPort: 3000
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -50,11 +46,15 @@ serviceAccount:
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-podAnnotations: {}
-  
+podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8082"
 # This is for setting Kubernetes Labels to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
+
+# Secrets to be passed into the container as environment variables more information can be found here: https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-a-secret-for-use-in-a-pod
+existingSecretName: commafeed-secret
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -73,13 +73,17 @@ service:
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 80
-  targetPort: 3000
+  targetPort: 8082
+
+ports:
+  - name: http
+    containerPort: 8082
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -130,13 +134,17 @@ httpRoute:
   #     - name: version
   #       value: v2
 
-resources:
-  requests:
-    cpu: "500m"
-    memory: "512Mi"
-  limits:
-    cpu: "1"
-    memory: "1Gi"
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 probes:
@@ -180,20 +188,50 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
+volumes:
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
+  - name: commafeed
+    persistentVolumeClaim:
+      claimName: commafeed-pvc
+  - name: config
+    configMap:
+      name: commafeed
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts:
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
+  - name: commafeed
+    mountPath: /mnt/data/commafeed
+  - name: config
+    mountPath: /commafeed/config
+    readOnly: true
+
+pvc:
+  enabled: true
+  name: commafeed-pvc
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  storageClassName: ""
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+# This section is for setting up the configmap more information can be found here: https://kubernetes.io/docs/concepts/configuration/configmap/
+config:
+  applicationProperties: |
+    quarkus.datasource.jdbc.url=${COMMAFEED_DB_URL}
+    quarkus.datasource.username=${COMMAFEED_DB_USER}
+    quarkus.datasource.password=${COMMAFEED_DB_PASSWORD}
+
+    commafeed.database.cleanup.entries-max-age=7D
+    commafeed.database.cleanup.max-feed-capacity=100
+    commafeed.database.cleanup.statuses-max-age=7D

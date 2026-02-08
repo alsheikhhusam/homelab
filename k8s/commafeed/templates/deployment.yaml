@@ -1,9 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "portfolio.fullname" . }}
+  name: {{ include "commafeed.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "portfolio.labels" . | nindent 4 }}
+    {{- include "commafeed.labels" . | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   replicas: {{ .Values.replicaCount }}
@@ -11,42 +12,24 @@ spec:
     type: {{ .Values.deploymentStrategy.type }}
   selector:
     matchLabels:
-      {{- include "portfolio.selectorLabels" . | nindent 6 }}
+      app: {{ include "commafeed.fullname" . }}
   template:
     metadata:
       labels:
-        {{- include "portfolio.selectorLabels" . | nindent 8 }}
-      {{- with .Values.podAnnotations }}
+        app: {{ include "commafeed.fullname" . }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       containers:
-        - name: {{ include "portfolio.name" . }}
+        - name: {{ (index .Values.containers 0).name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.command }}
-          command:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.args }}
-          args:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- if .Values.envFromSecret.name }}
+          ports:
+            - name: {{ (index .Values.ports 0).name }}
+              containerPort: {{ (index .Values.ports 0).containerPort }}
           envFrom:
             - secretRef:
-                name: {{ .Values.envFromSecret.name }}
-          {{- end }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          ports:
-            - containerPort: {{ .Values.containerPort }}
-              name: http
+                name: {{ .Values.existingSecretName }}
           {{- if and .Values.probes.enabled .Values.probes.startup.enabled }}
           startupProbe:
             {{- toYaml (omit .Values.probes.startup "enabled") | nindent 12 }}
@@ -61,3 +44,9 @@ spec:
           readinessProbe:
             {{- toYaml (omit .Values.probes.readiness "enabled") | nindent 12 }}
           {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- tpl (toYaml .Values.volumeMounts) . | nindent 12 }}
+      volumes:
+        {{- tpl (toYaml .Values.volumes) . | nindent 8 }}
