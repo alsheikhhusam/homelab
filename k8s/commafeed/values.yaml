@@ -29,13 +29,13 @@ containers:
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
-nameOverride: ""
+nameOverride: "commafeed"
 fullnameOverride: ""
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
@@ -189,10 +189,6 @@ autoscaling:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
   - name: commafeed
     persistentVolumeClaim:
       claimName: commafeed-pvc
@@ -202,9 +198,6 @@ volumes:
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
   - name: commafeed
     mountPath: /mnt/data/commafeed
   - name: config
