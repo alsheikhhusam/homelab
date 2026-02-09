@@ -42,7 +42,7 @@ nameOverride: null
 # -- Overrides the chart's computed fullname
 fullnameOverride: null
 # -- Overrides the chart's namespace
-namespaceOverride: null
+namespaceOverride: telemetry
 # -- Overrides the chart's cluster label
 clusterLabelOverride: null
 # -- Image pull secrets for Docker images
@@ -56,7 +56,7 @@ imagePullSecrets: []
 # - SingleBinary<->SimpleScalable: Migrate from SingleBinary to SimpleScalable (or vice versa)
 # - SimpleScalable<->Distributed: Migrate from SimpleScalable to Distributed (or vice versa)
 # Note: SimpleScalable and Distributed REQUIRE the use of object storage.
-deploymentMode: SimpleBinary
+deploymentMode: SingleBinary
 ######################################################################################################################
 #
 # Base Loki Configs including kubernetes configurations and configurations for Loki itself,
@@ -409,6 +409,7 @@ loki:
     trafficDistribution: ""
   # -- Limits config
   limits_config:
+    retention_period: 168h
     reject_old_samples: true
     reject_old_samples_max_age: 168h
     max_cache_freshness_per_query: 10m
@@ -579,7 +580,12 @@ loki:
       max_per_second: 20
       up_to: 3
   # --  Optional compactor configuration
-  compactor: {}
+  compactor:
+    retention_enabled: true
+    delete_request_store: filesystem
+    compaction_interval: 10m
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
   # --  Optional compactor grpc client configuration
   compactor_grpc_client: {}
   # --  Optional pattern ingester configuration
@@ -657,7 +663,7 @@ enterprise:
   # -- Name of the external config secret to use
   externalConfigName: ""
   # -- Use GEL gateway, if false will use the default nginx gateway
-  gelGateway: true
+  gelGateway: false
   # -- If enabled, the correct admin_client storage will be configured. If disabled while running enterprise,
   # make sure auth is set to `type: trust`, or that `auth_enabled` is set to `false`.
   adminApi:
@@ -1057,7 +1063,7 @@ adminApi:
 # Configuration for the gateway
 gateway:
   # -- Specifies whether the gateway should be enabled
-  enabled: true
+  enabled: false
   # -- Number of replicas for the gateway
   replicas: 1
   # -- Default container port
@@ -1462,7 +1468,7 @@ singleBinary:
   replicas: 1
   autoscaling:
     # -- Enable autoscaling
-    enabled: true
+    enabled: false
     # -- Minimum autoscaling replicas for the single binary
     minReplicas: 1
     # -- Maximum autoscaling replicas for the single binary
