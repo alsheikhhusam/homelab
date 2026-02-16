@@ -544,7 +544,11 @@ worker:
     labels: {}
 
   # -- Extra environment variables
-  extraEnvVars: {}
+  extraEnvVars:
+    WEBHOOK_URL: "https://n8n.husamalsheikh.com"
+    N8N_HOST: "n8n.husamalsheikh.com"
+    N8N_PROTOCOL: "https"
+    N8N_PORT: "443"
 
   # -- Extra secrets for environment variables
   extraSecretNamesForEnvFrom: []
