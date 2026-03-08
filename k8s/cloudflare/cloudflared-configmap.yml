@@ -10,6 +10,13 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
+    - hostname: omni.husamalsheikh.com
+      service: http://omni.omni.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: omni.husamalsheikh.com
+        originServerName: omni.husamalsheikh.com
     - hostname: n8n.husamalsheikh.com
       service: http://n8n.n8n.svc.cluster.local:5678
       originRequest:
