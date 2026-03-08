@@ -11,7 +11,7 @@ data:
     no-autoupdate: true
     ingress:
     - hostname: omni.husamalsheikh.com
-      service: http://omni.omni.svc.cluster.local:80
+      service: http://omni-tools.omni.svc.cluster.local:80
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
