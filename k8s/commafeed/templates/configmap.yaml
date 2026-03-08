@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "commafeed.fullname" . }}
+  labels:
+    {{- include "commafeed.labels" . | nindent 4 }}
+data:
+  application.properties: |
+{{ .Values.config.applicationProperties | indent 4 }}

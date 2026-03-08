@@ -8,6 +8,11 @@ replicaCount: 1
 # This sets the number of old ReplicaSets to retain to allow rollback more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit
 revisionHistoryLimit: 1
 
+# This sets the deployment strategy more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#deployment-strategy
+deploymentStrategy:
+  type: RollingUpdate
+
+
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
   repository: ghcr.io/alsheikhhusam/portfolio
@@ -45,9 +50,7 @@ serviceAccount:
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-podAnnotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "3000"
+podAnnotations: {}
   
 # This is for setting Kubernetes Labels to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/

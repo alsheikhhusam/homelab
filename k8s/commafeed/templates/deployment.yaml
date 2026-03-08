@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "commafeed.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "commafeed.labels" . | nindent 4 }}
+spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: {{ .Values.deploymentStrategy.type }}
+  selector:
+    matchLabels:
+      app: {{ include "commafeed.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "commafeed.fullname" . }}
+      annotations:
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ (index .Values.containers 0).name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: {{ (index .Values.ports 0).name }}
+              containerPort: {{ (index .Values.ports 0).containerPort }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.existingSecretName }}
+          {{- if and .Values.probes.enabled .Values.probes.startup.enabled }}
+          startupProbe:
+            {{- toYaml (omit .Values.probes.startup "enabled") | nindent 12 }}
+          {{- end }}
+
+          {{- if and .Values.probes.enabled .Values.probes.liveness.enabled }}
+          livenessProbe:
+            {{- toYaml (omit .Values.probes.liveness "enabled") | nindent 12 }}
+          {{- end }}
+
+          {{- if and .Values.probes.enabled .Values.probes.readiness.enabled }}
+          readinessProbe:
+            {{- toYaml (omit .Values.probes.readiness "enabled") | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- tpl (toYaml .Values.volumeMounts) . | nindent 12 }}
+      volumes:
+        {{- tpl (toYaml .Values.volumes) . | nindent 8 }}

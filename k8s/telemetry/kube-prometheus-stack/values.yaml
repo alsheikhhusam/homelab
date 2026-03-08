@@ -1287,7 +1287,7 @@ grafana:
   ## Timezone for the default dashboards
   ## Other options are: browser or a specific timezone, i.e. Europe/Luxembourg
   ##
-  defaultDashboardsTimezone: utc
+  defaultDashboardsTimezone: est
 
   ## Editable flag for the default dashboards
   ##
@@ -1295,7 +1295,7 @@ grafana:
 
   ## Default interval for Grafana dashboards
   ##
-  defaultDashboardsInterval: 1m
+  defaultDashboardsInterval: 5s
 
   adminUser: admin
   adminPassword: admin
@@ -1345,15 +1345,15 @@ grafana:
 
   # # To make Grafana persistent (Using Statefulset)
   # #
-  # persistence:
-  #   enabled: true
-  #   type: sts
-  #   storageClassName: "storageClassName"
-  #   accessModes:
-  #     - ReadWriteOnce
-  #   size: 20Gi
-  #   finalizers:
-  #     - kubernetes.io/pvc-protection
+  persistence:
+    enabled: true
+    type: sts
+    # storageClassName: "storageClassName"
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
 
   serviceAccount:
     create: true
@@ -1448,7 +1448,15 @@ grafana:
 
   ## Configure additional grafana datasources (passed through tpl)
   ## ref: https://grafana.com/docs/grafana/latest/administration/provisioning/#datasources
-  additionalDataSources: []
+  additionalDataSources:
+    - name: loki
+      uid: loki
+      type: loki
+      access: proxy
+      jsonData:
+        tlsSkipVerify: true
+      orgId: 1
+      url: http://loki.telemetry.svc.cluster.local:3100
   # - name: prometheus-sample
   #   access: proxy
   #   basicAuth: true
