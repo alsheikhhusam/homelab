@@ -1,0 +1,22 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "wallos.fullname" . }}-data
+  labels:
+    {{- include "wallos.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size | quote }}
+  accessModes:
+    {{- toYaml .Values.persistence.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "wallos.fullname" . }}-data
+  {{- with .Values.persistence.pv }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}

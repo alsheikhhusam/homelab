@@ -10,6 +10,13 @@ data:
     metrics: 0.0.0.0:2000
     no-autoupdate: true
     ingress:
+    - hostname: wallos.husamalsheikh.com
+      service: http://wallos.wallos.svc.cluster.local:80
+      originRequest:
+        noTLSVerify: false
+        connectTimeout: 30s
+        httpHostHeader: wallos.husamalsheikh.com
+        originServerName: wallos.husamalsheikh.com
     - hostname: omni.husamalsheikh.com
       service: http://omni-tools.omni.svc.cluster.local:80
       originRequest:
