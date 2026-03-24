@@ -210,7 +210,6 @@ pvc:
   accessModes:
     - ReadWriteOnce
   size: 1Gi
-  storageClassName: ""
 
 nodeSelector: {}
 
