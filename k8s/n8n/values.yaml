@@ -1066,6 +1066,7 @@ postgresql:
         limits:
           cpu: 250m
           memory: 256Mi
+
     # -- This is for setting up the primary service.
     service:
       # -- This is for setting up the service ports.
