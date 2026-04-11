@@ -94,11 +94,11 @@ ingress:
 
 resources:
   requests:
-    cpu: 5m
-    memory: 180Mi
+    cpu: 10m
+    memory: 128Mi
   limits:
-    cpu: 50m
-    memory: 350Mi
+    cpu: 100m
+    memory: 256Mi
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -227,9 +227,7 @@ oidc:
 ##     secretName: k8s-secret-name
 ##     key: key-inside-the-secret
 ##
-extraEnv:
-  - name: GOOGLE_APPLICATION_CREDENTIALS
-    value: /dev/null
+extraEnv: []
 
 ## Example extraEnv for configuring SMTP
 ## extraEnv:
