@@ -316,17 +316,13 @@ main:
     maxUnavailable: null
 
   # -- This block is for setting up the resource management for the main pod more information can be found here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-  resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # limits:
-  #   cpu: 2000m
-  #   memory: 1Gi
+  resources:
+    requests:
+      cpu: 10m
+      memory: 700Mi
+    limits:
+      cpu: 200m
+      memory: 1Gi
 
   # -- This is to setup the liveness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
@@ -1063,6 +1059,13 @@ postgresql:
 
   # -- This is for setting up the primary service.
   primary:
+    resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
     # -- This is for setting up the primary service.
     service:
       # -- This is for setting up the service ports.
