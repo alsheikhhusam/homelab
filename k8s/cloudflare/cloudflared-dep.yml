@@ -23,6 +23,13 @@ spec:
         - --config
         - /etc/cloudflared/config/config.yaml
         - run
+        resources:
+          requests:
+            cpu: 10m
+            memory: 30Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
         livenessProbe:
           httpGet:
             path: /ready
