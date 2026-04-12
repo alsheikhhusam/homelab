@@ -1155,7 +1155,7 @@ extraManifests:
               restartPolicy: OnFailure
               containers:
               - name: cron-runner
-                image: alpine/k8s:1.24.7
+                image: alpine/k8s:1.35.3
                 command: ["/bin/sh","-c"]
                 args:
                   - |
@@ -1201,7 +1201,7 @@ extraManifests:
               restartPolicy: OnFailure
               containers:
                 - name: cron-runner
-                  image: alpine/k8s:1.24.7
+                  image: alpine/k8s:1.35.3
                   command: ["/bin/sh", "-c"]
                   args:
                     - |
