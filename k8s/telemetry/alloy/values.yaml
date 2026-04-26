@@ -89,11 +89,32 @@ alloy:
           regex         = "(.+)"
           replacement   = "$1"
         }
+
+        rule {
+          action        = "drop"
+          source_labels = ["__meta_kubernetes_namespace"]
+          regex         = "mw-agent-ns"
+        }
       }
 
       loki.source.kubernetes "podlogs" {
         targets    = discovery.relabel.podlabels.output
+        forward_to = [loki.process.drop_transient.receiver]
+      }
+
+      loki.process "drop_transient" {
         forward_to = [loki.write.default.receiver]
+
+        stage.drop {
+          expression = ".*is waiting to start: PodInitializing.*"
+          drop_counter_reason = "pod_initializing"
+        }
+
+        stage.drop {
+          expression = ".*unable to upgrade connection: container not found.*"
+          drop_counter_reason = "container_not_found"
+        }
+
       }
 
       loki.write "default" {
