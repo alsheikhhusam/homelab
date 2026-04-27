@@ -40,8 +40,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations:
-  instrumentation.opentelemetry.io/inject-nodejs: "false"
+podAnnotations: {}
 
 podSecurityContext: {}
   # fsGroup: 2000

@@ -21,8 +21,7 @@ image:
 
 nameOverride: ""
 fullnameOverride: ""
-podAnnotations:
-  instrumentation.opentelemetry.io/inject-apache-httpd: "false"
+podAnnotations: {}
 podLabels: {}
 deploymentAnnotations: {}
 deploymentLabels: {}
@@ -1151,11 +1150,7 @@ extraManifests:
         spec:
           ttlSecondsAfterFinished: 3600
           template:
-            metadata:
-              annotations:
-                instrumentation.opentelemetry.io/inject-nodejs: "false"
-                instrumentation.opentelemetry.io/inject-apache: "false"
-                instrumentation.opentelemetry.io/inject-nginx: "false"
+            metadata: {}
             spec:
               serviceAccountName: nextcloud-maintenance
               restartPolicy: OnFailure
@@ -1202,11 +1197,7 @@ extraManifests:
         spec:
           ttlSecondsAfterFinished: 3600
           template:
-            metadata:
-              annotations:
-                instrumentation.opentelemetry.io/inject-nodejs: "false"
-                instrumentation.opentelemetry.io/inject-apache: "false"
-                instrumentation.opentelemetry.io/inject-nginx: "false"
+            metadata: {}
             spec:
               serviceAccountName: nextcloud-maintenance
               restartPolicy: OnFailure
