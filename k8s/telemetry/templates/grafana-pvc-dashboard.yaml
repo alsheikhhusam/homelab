@@ -1,0 +1,93 @@
+{{- if .Values.pvcUsageExporter.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-pvc-usage
+  namespace: {{ .Release.Namespace }}
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "Storage"
+data:
+  pvc-usage.json: |
+    {
+      "title": "PVC Disk Usage",
+      "uid": "pvc-usage",
+      "schemaVersion": 39,
+      "editable": true,
+      "time": { "from": "now-6h", "to": "now" },
+      "refresh": "5m",
+      "panels": [
+        {
+          "type": "bargauge",
+          "title": "PVC usage vs assigned size (%)",
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 120,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "orange", "value": 80 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "options": { "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "100 * pvc_dir_used_bytes / pvc_dir_limit_bytes",
+              "instant": true,
+              "format": "time_series"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "PVC used / assigned",
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "targets": [
+            {
+              "refId": "USED",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "pvc_dir_used_bytes",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "LIMIT",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "pvc_dir_limit_bytes",
+              "instant": true,
+              "format": "table"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "PVC used bytes over time",
+          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 9 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "pvc_dir_used_bytes",
+              "format": "time_series"
+            }
+          ]
+        }
+      ]
+    }
+{{- end }}

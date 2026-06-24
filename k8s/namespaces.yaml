@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudflare
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homepage
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portfolio
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wallos
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: omni
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: n8n
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: planka
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telemetry
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: commafeed
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nextcloud

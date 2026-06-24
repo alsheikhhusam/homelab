@@ -1,0 +1,358 @@
+pvcUsageExporter:
+  enabled: true
+  schedule: "*/15 * * * *"
+  image: alpine:3.20
+
+# -----------------------------------------------------------------------------
+# kube-prometheus-stack: Grafana + Prometheus + node-exporter + kube-state-metrics
+# -----------------------------------------------------------------------------
+kube-prometheus-stack:
+  # Homelab does not need paging/alert routing. Drop Alertmanager to save a pod.
+  alertmanager:
+    enabled: false
+
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
+  defaultRules:
+    disabled:
+      Watchdog: true
+      InfoInhibitor: true
+      PrometheusNotConnectedToAlertmanagers: true
+
+  grafana:
+    # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).
+    fullnameOverride: grafana
+    # Admin credentials come from a Secret you create out-of-band (not in git):
+    #   kubectl -n telemetry create secret generic grafana-admin \
+    #     --from-literal=admin-user=admin \
+    #     --from-literal=admin-password='<choose-a-strong-password>'
+    admin:
+      existingSecret: grafana-admin
+      userKey: admin-user
+      passwordKey: admin-password
+    persistence:
+      enabled: true
+      size: 5Gi
+    initChownData:
+      enabled: false
+    # Loki datasource so logs are queryable from Grafana out of the box.
+    # Prometheus is provisioned as the default datasource by the chart.
+    additionalDataSources:
+      - name: Loki
+        uid: loki
+        type: loki
+        access: proxy
+        orgId: 1
+        url: http://loki.telemetry.svc.cluster.local:3100
+        jsonData:
+          tlsSkipVerify: true
+
+    # SMTP credentials live in the grafana-smtp secret (created out-of-band):
+    #   kubectl -n telemetry create secret generic grafana-smtp \
+    #     --from-literal=user='<smtp-user>' --from-literal=password='<smtp-pass>'
+    grafana.ini:
+      smtp:
+        enabled: true
+        host: smtp.gmail.com:587
+        from_address: thejimscott99@gmail.com
+        from_name: Homelab Grafana
+    smtp:
+      existingSecret: grafana-smtp
+      userKey: user
+      passwordKey: password
+
+    # --- Unified alerting provisioning (alerts-as-code) ------------------------
+    # Thresholds are NOT hard-coded here: the rule compares used vs the assigned
+    # size emitted as pvc_dir_limit_bytes by the exporter (limits.txt is the single
+    # source of truth). Edit sizes there and alerts follow automatically.
+    alerting:
+      contactpoints.yaml:
+        apiVersion: 1
+        contactPoints:
+          - orgId: 1
+            name: email-default
+            receivers:
+              - uid: email_default
+                type: email
+                settings:
+                  addresses: alsheikhhusam@gmail.com
+                  singleEmail: false
+      policies.yaml:
+        apiVersion: 1
+        policies:
+          - orgId: 1
+            receiver: email-default
+            group_by: ["grafana_folder", "alertname"]
+            group_wait: 30s
+            group_interval: 5m
+            repeat_interval: 12h
+      rules.yaml:
+        apiVersion: 1
+        groups:
+          - orgId: 1
+            name: pvc-usage
+            folder: Storage
+            interval: 5m
+            rules:
+              - uid: pvc-over-90pct
+                title: PVC over 90% of assigned size
+                condition: C
+                for: 10m
+                noDataState: OK
+                execErrState: OK
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "A PVC is over 90% of its assigned size. See the 'PVC Disk Usage' dashboard; free space or adjust limits.txt."
+                data:
+                  - refId: A
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: pvc_dir_used_bytes / pvc_dir_limit_bytes
+                      instant: true
+                      range: false
+                      refId: A
+                  - refId: C
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator: { params: [0.9], type: gt }
+                          operator: { type: and }
+                          query: { params: [C] }
+                          reducer: { type: last }
+                          type: query
+                      expression: A
+                      refId: C
+                      type: threshold
+              - uid: pvc-over-100pct
+                title: PVC over its assigned size
+                condition: C
+                for: 5m
+                noDataState: OK
+                execErrState: OK
+                labels:
+                  severity: critical
+                annotations:
+                  summary: "A PVC has exceeded its assigned size. See the 'PVC Disk Usage' dashboard; free space or adjust limits.txt."
+                data:
+                  - refId: A
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: pvc_dir_used_bytes / pvc_dir_limit_bytes
+                      instant: true
+                      range: false
+                      refId: A
+                  - refId: C
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator: { params: [1.0], type: gt }
+                          operator: { type: and }
+                          query: { params: [C] }
+                          reducer: { type: last }
+                          type: query
+                      expression: A
+                      refId: C
+                      type: threshold
+
+  # Prometheus: modest retention + its own PVC.
+  prometheus:
+    prometheusSpec:
+      retention: 7d
+      retentionSize: 4500MB
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 5Gi
+
+  prometheus-node-exporter:
+    extraArgs:
+      - --collector.textfile.directory=/host/textfile
+    extraHostVolumeMounts:
+      - name: pvc-textfile
+        hostPath: /var/lib/node-exporter/textfile
+        mountPath: /host/textfile
+        readOnly: true
+        mountPropagation: HostToContainer
+
+  # kubeStateMetrics, nodeExporter and prometheusOperator stay enabled (chart
+  # defaults). The redundant standalone kube-state-metrics release in kube-system
+  # is removed during rollout so this one is the single source.
+
+# -----------------------------------------------------------------------------
+# Loki: slim single-binary (filesystem). The big reliability win on one node.
+# -----------------------------------------------------------------------------
+loki:
+  # Stable service name "loki" so the Grafana datasource and Alloy push URL
+  # keep resolving to loki.telemetry.svc.cluster.local:3100.
+  fullnameOverride: loki
+
+  deploymentMode: SingleBinary
+
+  loki:
+    auth_enabled: false
+    commonConfig:
+      replication_factor: 1
+    storage:
+      type: filesystem
+    schemaConfig:
+      configs:
+        - from: "2024-04-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+    limits_config:
+      retention_period: 336h # 14 days
+
+  singleBinary:
+    replicas: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+
+  # Zero out every distributed/scalable target so only the single binary runs.
+  backend: { replicas: 0 }
+  read: { replicas: 0 }
+  write: { replicas: 0 }
+  ingester: { replicas: 0 }
+  querier: { replicas: 0 }
+  queryFrontend: { replicas: 0 }
+  queryScheduler: { replicas: 0 }
+  distributor: { replicas: 0 }
+  compactor: { replicas: 0 }
+  indexGateway: { replicas: 0 }
+  bloomCompactor: { replicas: 0 }
+  bloomGateway: { replicas: 0 }
+
+  # Drop the heavy extras the chart would otherwise add.
+  gateway:
+    enabled: false
+  chunksCache:
+    enabled: false
+  resultsCache:
+    enabled: false
+  minio:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  test:
+    enabled: false
+  monitoring:
+    selfMonitoring:
+      enabled: false
+      grafanaAgent:
+        installOperator: false
+
+# -----------------------------------------------------------------------------
+# Alloy: log collection only (DaemonSet) -> ships pod logs to Loki.
+# -----------------------------------------------------------------------------
+alloy:
+  controller:
+    type: daemonset
+
+  alloy:
+    configMap:
+      create: true
+      content: |-
+        discovery.kubernetes "pods" {
+          role = "pod"
+        }
+
+        discovery.relabel "podlabels" {
+          targets = discovery.kubernetes.pods.targets
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_namespace"]
+            target_label  = "namespace"
+          }
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_name"]
+            target_label  = "pod"
+          }
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            target_label  = "container"
+          }
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_node_name"]
+            target_label  = "node"
+          }
+
+          // common "service" label candidates
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+            target_label  = "service"
+            regex         = "(.+)"
+            replacement   = "$1"
+          }
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_label_app"]
+            target_label  = "service"
+            regex         = "(.+)"
+            replacement   = "$1"
+          }
+
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+            target_label  = "service"
+            regex         = "(.+)"
+            replacement   = "$1"
+          }
+        }
+
+        loki.source.kubernetes "podlogs" {
+          targets    = discovery.relabel.podlabels.output
+          forward_to = [loki.process.drop_transient.receiver]
+        }
+
+        loki.process "drop_transient" {
+          forward_to = [loki.write.default.receiver]
+
+          stage.drop {
+            expression = ".*is waiting to start: PodInitializing.*"
+            drop_counter_reason = "pod_initializing"
+          }
+
+          stage.drop {
+            expression = ".*unable to upgrade connection: container not found.*"
+            drop_counter_reason = "container_not_found"
+          }
+        }
+
+        loki.write "default" {
+          endpoint {
+            url = "http://loki.telemetry.svc.cluster.local:3100/loki/api/v1/push"
+          }
+
+          external_labels = {
+            cluster = "homelab",
+          }
+        }

@@ -9,7 +9,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 - **Authentication** through Cloudflare Access
 - **Persistent Storage** for all configurations
 - **Monitoring** with Prometheus/Grafana
-- **Logging** with Loki/Promtail
+- **Logging** with Loki/Alloy
 
 ## 🛠️ Infrastructure
 
@@ -21,7 +21,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Authentication     | Cloudflare Access |
 | Dashboard          | Homepage |
 | Monitoring         | Prometheus + Grafana |
-| Logging            | Loki + Promtail |
+| Logging            | Loki + Alloy |
 
 ## 🖥️ Applications
 
@@ -34,6 +34,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | <img src="https://download.logo.wine/logo/CommaFeed/CommaFeed-Logo.wine.png" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
 | <img src="https://planka.app/cms-content/1/uploads/site/sitelogomenue.png?p=68e7ad5eeda1f" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2023_Obsidian_logo.svg/330px-2023_Obsidian_logo.svg.png" width="20"> | [**Obsidian**](https://obsidian.md) | Note Taking
+| <img src="https://omnitools.app/logo.png" width="20"> | [**Omni Tools**](https://omnitools.app/) | Self-hosted collection of web utilities and tools
 
 ### Telemetry
 | Logo | Name | Description |
