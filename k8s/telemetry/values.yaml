@@ -1,8 +1,7 @@
-# =============================================================================
-# Umbrella values for the "telemetry" release.
-# Each top-level key matches a dependency name in Chart.yaml and overrides that
-# subchart's values. Anything not set here uses the subchart defaults.
-# =============================================================================
+pvcUsageExporter:
+  enabled: true
+  schedule: "*/15 * * * *"
+  image: alpine:3.20
 
 # -----------------------------------------------------------------------------
 # kube-prometheus-stack: Grafana + Prometheus + node-exporter + kube-state-metrics
@@ -11,6 +10,19 @@ kube-prometheus-stack:
   # Homelab does not need paging/alert routing. Drop Alertmanager to save a pod.
   alertmanager:
     enabled: false
+
+  kubeControllerManager:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeProxy:
+    enabled: false
+
+  defaultRules:
+    disabled:
+      Watchdog: true
+      InfoInhibitor: true
+      PrometheusNotConnectedToAlertmanagers: true
 
   grafana:
     # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).
@@ -26,6 +38,8 @@ kube-prometheus-stack:
     persistence:
       enabled: true
       size: 5Gi
+    initChownData:
+      enabled: false
     # Loki datasource so logs are queryable from Grafana out of the box.
     # Prometheus is provisioned as the default datasource by the chart.
     additionalDataSources:
@@ -38,17 +52,142 @@ kube-prometheus-stack:
         jsonData:
           tlsSkipVerify: true
 
+    # SMTP credentials live in the grafana-smtp secret (created out-of-band):
+    #   kubectl -n telemetry create secret generic grafana-smtp \
+    #     --from-literal=user='<smtp-user>' --from-literal=password='<smtp-pass>'
+    grafana.ini:
+      smtp:
+        enabled: true
+        host: smtp.gmail.com:587
+        from_address: thejimscott99@gmail.com
+        from_name: Homelab Grafana
+    smtp:
+      existingSecret: grafana-smtp
+      userKey: user
+      passwordKey: password
+
+    # --- Unified alerting provisioning (alerts-as-code) ------------------------
+    # Thresholds are NOT hard-coded here: the rule compares used vs the assigned
+    # size emitted as pvc_dir_limit_bytes by the exporter (limits.txt is the single
+    # source of truth). Edit sizes there and alerts follow automatically.
+    alerting:
+      contactpoints.yaml:
+        apiVersion: 1
+        contactPoints:
+          - orgId: 1
+            name: email-default
+            receivers:
+              - uid: email_default
+                type: email
+                settings:
+                  addresses: alsheikhhusam@gmail.com
+                  singleEmail: false
+      policies.yaml:
+        apiVersion: 1
+        policies:
+          - orgId: 1
+            receiver: email-default
+            group_by: ["grafana_folder", "alertname"]
+            group_wait: 30s
+            group_interval: 5m
+            repeat_interval: 12h
+      rules.yaml:
+        apiVersion: 1
+        groups:
+          - orgId: 1
+            name: pvc-usage
+            folder: Storage
+            interval: 5m
+            rules:
+              - uid: pvc-over-90pct
+                title: PVC over 90% of assigned size
+                condition: C
+                for: 10m
+                noDataState: OK
+                execErrState: OK
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "A PVC is over 90% of its assigned size. See the 'PVC Disk Usage' dashboard; free space or adjust limits.txt."
+                data:
+                  - refId: A
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: pvc_dir_used_bytes / pvc_dir_limit_bytes
+                      instant: true
+                      range: false
+                      refId: A
+                  - refId: C
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator: { params: [0.9], type: gt }
+                          operator: { type: and }
+                          query: { params: [C] }
+                          reducer: { type: last }
+                          type: query
+                      expression: A
+                      refId: C
+                      type: threshold
+              - uid: pvc-over-100pct
+                title: PVC over its assigned size
+                condition: C
+                for: 5m
+                noDataState: OK
+                execErrState: OK
+                labels:
+                  severity: critical
+                annotations:
+                  summary: "A PVC has exceeded its assigned size. See the 'PVC Disk Usage' dashboard; free space or adjust limits.txt."
+                data:
+                  - refId: A
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: prometheus
+                    model:
+                      editorMode: code
+                      expr: pvc_dir_used_bytes / pvc_dir_limit_bytes
+                      instant: true
+                      range: false
+                      refId: A
+                  - refId: C
+                    relativeTimeRange: { from: 600, to: 0 }
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                        - evaluator: { params: [1.0], type: gt }
+                          operator: { type: and }
+                          query: { params: [C] }
+                          reducer: { type: last }
+                          type: query
+                      expression: A
+                      refId: C
+                      type: threshold
+
   # Prometheus: modest retention + its own PVC.
   prometheus:
     prometheusSpec:
-      retention: 15d
+      retention: 7d
+      retentionSize: 4500MB
       storageSpec:
         volumeClaimTemplate:
           spec:
             accessModes: ["ReadWriteOnce"]
             resources:
               requests:
-                storage: 10Gi
+                storage: 5Gi
+
+  prometheus-node-exporter:
+    extraArgs:
+      - --collector.textfile.directory=/host/textfile
+    extraHostVolumeMounts:
+      - name: pvc-textfile
+        hostPath: /var/lib/node-exporter/textfile
+        mountPath: /host/textfile
+        readOnly: true
+        mountPropagation: HostToContainer
 
   # kubeStateMetrics, nodeExporter and prometheusOperator stay enabled (chart
   # defaults). The redundant standalone kube-state-metrics release in kube-system

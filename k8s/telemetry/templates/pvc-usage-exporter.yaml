@@ -1,0 +1,116 @@
+{{- if .Values.pvcUsageExporter.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pvc-usage-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: pvc-usage-exporter
+data:
+  limits.txt: |
+    # namespace/claim                         assigned-size  (matched by prefix)
+    n8n/n8n-main-persistence                   5Gi
+    planka/data-planka-postgresql-0            1Gi
+    nextcloud/nextcloud-nextcloud              10Gi
+    nextcloud/data-nextcloud-postgresql-0      1Gi
+    telemetry/storage-loki-0                   3Gi
+    telemetry/grafana                          1Gi
+    commafeed/commafeed-pvc                    1Gi
+    # prometheus claim name is very long; prefix-matched
+    telemetry/prometheus                       5Gi
+  collect.sh: |
+    #!/bin/sh
+    set -eu
+    STORAGE=/host/storage
+    OUT=/host/textfile/pvc_usage.prom
+    LIMITS=/scripts/limits.txt
+    tmp="$OUT.$$"
+
+    to_bytes() { # 5Gi -> bytes
+      num=$(printf '%s' "$1" | sed 's/[^0-9].*$//')
+      unit=$(printf '%s' "$1" | sed 's/^[0-9]*//')
+      case "$unit" in
+        Gi) echo $((num*1024*1024*1024)) ;;
+        Mi) echo $((num*1024*1024)) ;;
+        Ki) echo $((num*1024)) ;;
+        *)  echo "$num" ;;
+      esac
+    }
+
+    lookup_limit() { # arg: namespace/claim ; echoes bytes or empty
+      key="$1"
+      while read -r k v _rest; do
+        [ -z "${k:-}" ] && continue
+        case "$k" in \#*) continue ;; esac
+        case "$key" in
+          "$k"*) to_bytes "$v"; return ;;
+        esac
+      done < "$LIMITS"
+      echo ""
+    }
+
+    {
+      echo "# HELP pvc_dir_used_bytes Bytes used by a local-path PVC directory (du)."
+      echo "# TYPE pvc_dir_used_bytes gauge"
+      echo "# HELP pvc_dir_limit_bytes Assigned/expected size for a PVC (alert threshold)."
+      echo "# TYPE pvc_dir_limit_bytes gauge"
+      for d in "$STORAGE"/pvc-*; do
+        [ -d "$d" ] || continue
+        base=$(basename "$d")
+        # dir format: pvc-<uuid>_<namespace>_<claim>  (uuid/ns have no underscores)
+        # Use pvc_namespace (not namespace) so node-exporter's own scrape labels
+        # don't clobber it into exported_namespace.
+        ns=$(printf '%s' "$base" | sed -E 's/^pvc-[0-9a-f-]+_([^_]+)_.*/\1/')
+        claim=$(printf '%s' "$base" | sed -E 's/^pvc-[0-9a-f-]+_[^_]+_(.*)/\1/')
+        kb=$(du -sk "$d" 2>/dev/null | awk '{print $1}')
+        [ -z "${kb:-}" ] && continue
+        echo "pvc_dir_used_bytes{pvc_namespace=\"$ns\",persistentvolumeclaim=\"$claim\"} $((kb*1024))"
+        lim=$(lookup_limit "$ns/$claim")
+        [ -n "$lim" ] && echo "pvc_dir_limit_bytes{pvc_namespace=\"$ns\",persistentvolumeclaim=\"$claim\"} $lim"
+      done
+    } > "$tmp"
+    mv "$tmp" "$OUT"
+    echo "wrote $OUT:"; cat "$OUT"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pvc-usage-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: pvc-usage-exporter
+spec:
+  schedule: {{ .Values.pvcUsageExporter.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: pvc-usage-exporter
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 0
+          containers:
+            - name: exporter
+              image: {{ .Values.pvcUsageExporter.image | quote }}
+              command: ["sh", "/scripts/collect.sh"]
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+                limits:   { cpu: 200m, memory: 64Mi }
+              volumeMounts:
+                - { name: storage,  mountPath: /host/storage,  readOnly: true }
+                - { name: textfile, mountPath: /host/textfile }
+                - { name: scripts,  mountPath: /scripts }
+          volumes:
+            - name: storage
+              hostPath: { path: /var/lib/rancher/k3s/storage, type: Directory }
+            - name: textfile
+              hostPath: { path: /var/lib/node-exporter/textfile, type: DirectoryOrCreate }
+            - name: scripts
+              configMap: { name: pvc-usage-exporter, defaultMode: 0755 }
+{{- end }}
