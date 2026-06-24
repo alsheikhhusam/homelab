@@ -9,7 +9,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 - **Authentication** through Cloudflare Access
 - **Persistent Storage** for all configurations
 - **Monitoring** with Prometheus/Grafana
-- **Logging** with Loki/Promtail
+- **Logging** with Loki/Alloy
 
 ## 🛠️ Infrastructure
 
@@ -21,7 +21,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Authentication     | Cloudflare Access |
 | Dashboard          | Homepage |
 | Monitoring         | Prometheus + Grafana |
-| Logging            | Loki + Promtail |
+| Logging            | Loki + Alloy |
 
 ## 🖥️ Applications
 

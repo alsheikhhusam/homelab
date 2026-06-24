@@ -1,3 +1,7 @@
 *secret.yml
 *secret.yaml
 .claude/
+
+# Built Helm chart dependencies (pulled via `helm dependency build`).
+# Chart.lock is committed for reproducible version pins.
+k8s/telemetry/charts/

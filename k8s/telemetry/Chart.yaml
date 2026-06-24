@@ -1,0 +1,16 @@
+apiVersion: v2
+name: telemetry
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: kube-prometheus-stack
+    version: 78.1.0
+    repository: https://prometheus-community.github.io/helm-charts
+  - name: loki
+    version: 6.52.0
+    repository: https://grafana.github.io/helm-charts
+  - name: alloy
+    version: 1.6.0
+    repository: https://grafana.github.io/helm-charts
