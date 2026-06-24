@@ -143,6 +143,14 @@ postgresql:
     # existingSecret: planka-postgresql
   serviceBindings:
     enabled: true
+  primary:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 192Mi
 
 ## Set this or existingDburlSecret if you disable the built-in postgresql deployment
 dburl:
