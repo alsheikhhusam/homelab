@@ -5,3 +5,5 @@
 # Built Helm chart dependencies (pulled via `helm dependency build`).
 # Chart.lock is committed for reproducible version pins.
 k8s/telemetry/charts/
+k8s/n8n/charts/
+k8s/nextcloud/charts/
