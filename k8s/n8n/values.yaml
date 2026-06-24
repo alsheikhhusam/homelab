@@ -20,10 +20,7 @@ n8n:
 
   # -- This will set the deployment strategy more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   strategy:
-    type: "RollingUpdate"
-    rollingUpdate:
-      maxSurge: "25%"
-      maxUnavailable: "25%"
+    type: "Recreate"
 
   # -- This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
   serviceAccount:
@@ -330,12 +327,18 @@ n8n:
       httpGet:
         path: /healthz
         port: http
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      failureThreshold: 6
 
     # -- This is to setup the readiness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
     readinessProbe:
       httpGet:
         path: /healthz/readiness
         port: http
+      initialDelaySeconds: 90
+      periodSeconds: 10
+      failureThreshold: 6
 
     # -- Force to use statefulset for the main pod. If true, the main pod will be created as a statefulset.
     forceToUseStatefulset: false
@@ -1050,7 +1053,7 @@ n8n:
   # -- Bitnami PostgreSQL configuration
   postgresql:
     # -- Enable postgresql
-    enabled: true
+    enabled: false
     # -- Enable postgresql architecture.
     architecture: standalone
 
