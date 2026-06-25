@@ -5,7 +5,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 
 ## 📌 Features
 - **Secure Remote Access** via Cloudflare Tunnel (no static IP required)
-- **Homepage Dashboard** as centralized management interface
+- **Glance Dashboard** as centralized management interface
 - **Authentication** through Cloudflare Access
 - **Persistent Storage** for all configurations
 - **Monitoring** with Prometheus/Grafana
@@ -19,7 +19,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Kubernetes         | K3s single-node cluster |
 | Ingress            | Cloudflare Tunnel in-cluster |
 | Authentication     | Cloudflare Access |
-| Dashboard          | Homepage |
+| Dashboard          | Glance |
 | Monitoring         | Prometheus + Grafana |
 | Logging            | Loki + Alloy |
 
@@ -29,7 +29,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 
 | Logo | Name | Description |
 |------|------|-------------|
-| <img src="https://camo.githubusercontent.com/1822c165e7941a2c1cbc126f8b3ae81a6853069ff748daa8a60abbf0d5d34180/68747470733a2f2f7777772e7376677265706f2e636f6d2f646f776e6c6f61642f3439393830372f686f6d652d706167652e737667" width="20"> | [**Homepage**](https://gethomepage.dev/) | Custom dashboard for homelab management |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/glance.svg" width="20"> | [**Glance**](https://github.com/glanceapp/glance) | Custom dashboard for homelab management |
 | <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
 | <img src="https://download.logo.wine/logo/CommaFeed/CommaFeed-Logo.wine.png" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
 | <img src="https://planka.app/cms-content/1/uploads/site/sitelogomenue.png?p=68e7ad5eeda1f" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management

@@ -60,7 +60,7 @@ data:
         httpHostHeader: next.husamalsheikh.com
         originServerName: next.husamalsheikh.com
     - hostname: home.husamalsheikh.com
-      service: http://homepage.homepage:3000
+      service: http://glance.glance:8080
       originRequest:
         noTLSVerify: false
         connectTimeout: 30s
