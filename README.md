@@ -58,5 +58,5 @@ Currently planned services that will be implemented in the future
 | Logo | Name | Description |
 |------|------|-------------|
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/n8n.svg" width="20"> | [**n8n**](https://n8n.io/) | Workflow automation platform |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/velero.svg" width="20"> | [**Velero**](https://velero.io/) | Kubernetes backup and migration |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/velero.svg" width="26"> | [**Velero**](https://velero.io/) | Kubernetes backup and migration |
 
