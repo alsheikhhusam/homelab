@@ -6,7 +6,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: homepage
+  name: glance
 ---
 apiVersion: v1
 kind: Namespace

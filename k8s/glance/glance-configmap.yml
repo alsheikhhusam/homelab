@@ -1,0 +1,169 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance
+  namespace: glance
+  labels:
+    app.kubernetes.io/name: glance
+data:
+  glance.yml: |
+    server:
+      host: 0.0.0.0
+      port: 8080
+      assets-path: /app/assets
+
+    document:
+      head: |
+        <script src="/assets/hijri-calendar.js?v=3" defer></script>
+
+    pages:
+      - name: Home
+        columns:
+          - size: small
+            widgets:
+              - type: clock
+                hour-format: 12h
+                timezones:
+                  - timezone: Asia/Riyadh
+                    label: Riyadh
+              - type: weather
+                location: Farmington Hills, Michigan, United States
+                units: metric
+                hour-format: 12h
+              - type: calendar
+                first-day-of-week: monday
+              - type: custom-api
+                title: Hijri Calendar
+                template: |
+                  <div class="widget-small-content-bounds">
+                    <div data-hijri-calendar></div>
+                  </div>
+
+          - size: full
+            widgets:
+              - type: search
+                search-engine: duckduckgo
+                new-tab: true
+              - type: bookmarks
+                groups:
+                  - title: Apps
+                    links:
+                      - title: Nextcloud
+                        url: https://next.husamalsheikh.com
+                      - title: Planka
+                        url: https://planka.husamalsheikh.com
+                      - title: n8n
+                        url: https://n8n.husamalsheikh.com
+                      - title: CommaFeed
+                        url: https://feed.husamalsheikh.com
+                      - title: Wallos
+                        url: https://wallos.husamalsheikh.com
+                      - title: Omni Tools
+                        url: https://omni.husamalsheikh.com
+                  - title: Infrastructure
+                    links:
+                      - title: Grafana
+                        url: https://grafana.husamalsheikh.com
+                      - title: Cloudflare
+                        url: https://dash.cloudflare.com/
+                  - title: Personal
+                    links:
+                      - title: GitHub
+                        url: https://github.com/alsheikhhusam
+                      - title: LinkedIn
+                        url: https://www.linkedin.com/in/husam-alsheikh/
+                      - title: Portfolio
+                        url: https://husamalsheikh.com
+                      - title: Gmail
+                        url: https://gmail.com
+                      - title: ProtonMail
+                        url: https://mail.proton.me/u/0/inbox
+                      - title: YouTube
+                        url: https://youtube.com
+                      - title: Claude
+                        url: https://claude.ai
+              - type: monitor
+                title: Services
+                cache: 1m
+                sites:
+                  - title: Portfolio
+                    url: https://husamalsheikh.com
+                    check-url: http://portfolio.portfolio.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/npm/lucide-static/icons/briefcase.svg
+                  - title: Nextcloud
+                    url: https://next.husamalsheikh.com
+                    check-url: http://nextcloud.nextcloud.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextcloud.png
+                  - title: Planka
+                    url: https://planka.husamalsheikh.com
+                    check-url: http://planka.planka.svc.cluster.local:1337
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/planka.png
+                  - title: n8n
+                    url: https://n8n.husamalsheikh.com
+                    check-url: http://n8n.n8n.svc.cluster.local:5678
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/n8n.png
+                  - title: CommaFeed
+                    url: https://feed.husamalsheikh.com
+                    check-url: http://commafeed.commafeed.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/commafeed.png
+                  - title: Wallos
+                    url: https://wallos.husamalsheikh.com
+                    check-url: http://wallos.wallos.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png
+                  - title: Omni Tools
+                    url: https://omni.husamalsheikh.com
+                    check-url: http://omni-tools.omni.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png
+                  - title: Grafana
+                    url: https://grafana.husamalsheikh.com
+                    check-url: http://grafana.telemetry.svc.cluster.local:80
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png
+              - type: group
+                widgets:
+                  - type: videos
+                    title: Muslim Lantern
+                    cache: 3h
+                    channels:
+                      - UCeCAQhKbU2ETNWxWxB94HgA
+                  - type: videos
+                    title: GNCA
+                    cache: 3h
+                    channels:
+                      - UCgGw5WSITWvDISNjydXPW3A
+              - type: group
+                widgets:
+                  - type: reddit
+                    subreddit: sysadmin
+                  - type: reddit
+                    subreddit: homelab
+                  - type: reddit
+                    subreddit: selfhosted
+                  - type: reddit
+                    subreddit: kubernetes
+                  - type: reddit
+                    subreddit: technology
+                  - type: reddit
+                    subreddit: guns
+                  - type: hacker-news
+
+          - size: small
+            widgets:
+              - type: server-stats
+                servers:
+                  - type: local
+                    name: Homelab
+              - type: to-do
+              - type: markets
+                markets:
+                  - symbol: SPY
+                    name: S&P 500
+                  - symbol: QQQ
+                    name: Nasdaq 100
+                  - symbol: BTC-USD
+                    name: Bitcoin
+                  - symbol: NVDA
+                    name: NVIDIA
+                  - symbol: AAPL
+                    name: Apple
+                  - symbol: GC=F
+                    name: Gold

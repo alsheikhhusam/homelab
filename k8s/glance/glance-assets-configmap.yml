@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-assets
+  namespace: glance
+  labels:
+    app.kubernetes.io/name: glance
+data:
+  hijri-calendar.js: |
+    // Renders a Hijri calendar into [data-hijri-calendar] using Glance's own
+    // calendar markup/classes so it inherits the native calendar CSS exactly,
+    // with the same prev/next/"back to current month" navigation. Hijri dates
+    // computed client-side via Intl (Umm al-Qura) — no network calls.
+    (function () {
+      "use strict";
+      var CAL = "islamic-umalqura";
+      var leftSvg = '<svg stroke="var(--color-text-base)" fill="none" viewBox="0 0 24 24" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>';
+      var rightSvg = '<svg stroke="var(--color-text-base)" fill="none" viewBox="0 0 24 24" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>';
+      var undoSvg = '<svg stroke="var(--color-text-base)" fill="none" viewBox="0 0 24 24" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>';
+
+      var partsFmt = new Intl.DateTimeFormat("en-u-ca-" + CAL, { day: "numeric", month: "numeric", year: "numeric" });
+      var monthArFmt = new Intl.DateTimeFormat("ar-u-ca-" + CAL, { month: "long" });
+      var arDigits = new Intl.NumberFormat("ar-u-nu-arab");
+      var arDigits2 = new Intl.NumberFormat("ar-u-nu-arab", { minimumIntegerDigits: 2 });
+
+      var WEEK_AR = ["إث", "ثل", "أر", "خم", "جم", "سب", "أح"];
+      var FIRST_DAY = 1; // Monday, matching Glance default
+
+      function hp(date) {
+        var o = {};
+        partsFmt.formatToParts(date).forEach(function (x) { if (x.type !== "literal") o[x.type] = Number(x.value); });
+        return o;
+      }
+      function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
+      function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+      function firstOfHijriMonth(date) {
+        var d = new Date(date), g = 0;
+        while (hp(d).day !== 1 && g < 40) { d = addDays(d, -1); g++; }
+        return d;
+      }
+      function daysInHijriMonth(firstDate) {
+        var m = hp(firstDate).month, d = new Date(firstDate), c = 0;
+        while (hp(d).month === m && c < 40) { c++; d = addDays(d, 1); }
+        return c;
+      }
+      function el(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+      function button(cls, title, svg, fn) {
+        var b = el("button", "calendar-header-button" + (cls ? " " + cls : ""));
+        b.title = title; b.innerHTML = svg; b.addEventListener("click", fn); return b;
+      }
+
+      function build(container, firstDate) {
+        var today = new Date();
+        var cur = hp(firstDate);
+        var th = hp(today);
+        var isCurrent = (cur.month === th.month && cur.year === th.year);
+        container.innerHTML = "";
+
+        // Header: month/year + undo, and the prev/number/next switcher
+        var header = el("div", "flex justify-between items-center");
+        var my = el("div", "size-h2 color-highlight");
+        my.innerHTML = monthArFmt.format(firstDate) +
+          ' <span class="size-h3">' + arDigits.format(cur.year) + "</span>";
+        var undo = button("calendar-undo-button", "Back to current month", undoSvg, function () {
+          build(container, firstOfHijriMonth(new Date()));
+        });
+        if (isCurrent) undo.style.display = "none";
+        my.appendChild(undo);
+
+        var sw = el("div", "flex gap-7 items-center");
+        sw.appendChild(button("", "Previous month", leftSvg, function () {
+          build(container, firstOfHijriMonth(addDays(firstDate, -1)));
+        }));
+        var mn = el("div", "color-highlight"); mn.style.marginTop = "0.1rem";
+        mn.textContent = arDigits2.format(cur.month);
+        sw.appendChild(mn);
+        var len = daysInHijriMonth(firstDate);
+        sw.appendChild(button("", "Next month", rightSvg, function () {
+          build(container, addDays(firstDate, len));
+        }));
+
+        header.appendChild(my); header.appendChild(sw); container.appendChild(header);
+
+        // Weekday header row (bilingual)
+        var wk = el("div", "calendar-dates margin-top-15");
+        for (var i = 0; i < 7; i++) {
+          var h = el("div", "color-subdue");
+          h.style.fontSize = "1rem";
+          h.textContent = WEEK_AR[i];
+          wk.appendChild(h);
+        }
+        container.appendChild(wk);
+
+        // 42-cell date grid with spillover, arabic-only numerals
+        var firstWeekday = firstDate.getDay();
+        var leading = ((firstWeekday - FIRST_DAY + 7) % 7) || 7;
+        var start = addDays(firstDate, -leading);
+        var grid = el("div", "calendar-dates margin-top-3");
+        grid.style.fontSize = "1.35rem";
+        for (var j = 0; j < 42; j++) {
+          var cd = addDays(start, j), cdh = hp(cd);
+          var inMonth = (cdh.month === cur.month && cdh.year === cur.year);
+          var cell = el("div", "calendar-date");
+          if (!inMonth) cell.classList.add("calendar-spillover-date");
+          if (inMonth && sameDay(cd, today)) cell.classList.add("calendar-current-date");
+          cell.textContent = arDigits.format(cdh.day);
+          grid.appendChild(cell);
+        }
+        container.appendChild(grid);
+      }
+
+      function init(node) {
+        if (node.dataset.hijriInit) return;
+        node.dataset.hijriInit = "1";
+        try { build(node, firstOfHijriMonth(new Date())); }
+        catch (e) { node.textContent = "Hijri calendar unavailable"; }
+      }
+      function scan() {
+        var nodes = document.querySelectorAll("[data-hijri-calendar]");
+        for (var i = 0; i < nodes.length; i++) init(nodes[i]);
+      }
+
+      if (document.readyState !== "loading") scan();
+      document.addEventListener("DOMContentLoaded", scan);
+      new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+    })();
