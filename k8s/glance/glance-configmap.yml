@@ -15,6 +15,7 @@ data:
     document:
       head: |
         <script src="/assets/hijri-calendar.js?v=3" defer></script>
+        <script src="/assets/prayer-widget.js?v=3" defer></script>
 
     pages:
       - name: Home
@@ -41,9 +42,10 @@ data:
 
           - size: full
             widgets:
-              - type: search
-                search-engine: duckduckgo
-                new-tab: true
+              - type: custom-api
+                title: Prayer Times
+                template: |
+                  <div data-prayer-widget></div>
               - type: bookmarks
                 groups:
                   - title: Apps
