@@ -67,10 +67,10 @@ data:
                         url: https://omni.husamalsheikh.com
                   - title: Infrastructure
                     links:
-                      - title: Grafana
-                        url: https://grafana.husamalsheikh.com
                       - title: Cloudflare
                         url: https://dash.cloudflare.com/
+                      - title: Grafana
+                        url: https://grafana.husamalsheikh.com
                   - title: Personal
                     links:
                       - title: GitHub
