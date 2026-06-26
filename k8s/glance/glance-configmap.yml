@@ -31,14 +31,17 @@ data:
                 location: Farmington Hills, Michigan, United States
                 units: metric
                 hour-format: 12h
-              - type: calendar
-                first-day-of-week: monday
-              - type: custom-api
-                title: Hijri Calendar
-                template: |
-                  <div class="widget-small-content-bounds">
-                    <div data-hijri-calendar></div>
-                  </div>
+              - type: group
+                widgets:
+                  - type: calendar
+                    title: Gregorian
+                    first-day-of-week: monday
+                  - type: custom-api
+                    title: Hijri
+                    template: |
+                      <div class="widget-small-content-bounds">
+                        <div data-hijri-calendar></div>
+                      </div>
 
           - size: full
             widgets:
