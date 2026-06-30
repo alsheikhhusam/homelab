@@ -59,5 +59,6 @@ Currently planned services that will be implemented in the future
 |------|------|-------------|
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/n8n.svg" width="20"> | [**n8n**](https://n8n.io/) | Workflow automation platform |
 | <img src="https://raw.githubusercontent.com/cncf/landscape/master/hosted_logos/k8up.svg" width="20"> | [**K8up**](https://k8up.io/) | Application-aware backups of PVC and database data |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/stalwart.svg" width="20"> | [**Stalwart**](https://stalw.art/) | Self-hosted mail server (needs a free public-IP relay, e.g. Oracle Always Free, since Cloudflare Tunnel can't carry SMTP) |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/stalwart.svg" width="20"> | [**Stalwart**](https://stalw.art/) | Self-hosted mail server |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/jellyfin.svg" width="20"> | [**Jellyfin**](https://jellyfin.org/) | Self-hosted media server |
 
