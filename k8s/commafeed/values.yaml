@@ -13,7 +13,7 @@ revisionHistoryLimit: 1
 
 # This sets the deployment strategy more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#deployment-strategy
 deploymentStrategy:
-  type: RollingUpdate
+  type: Recreate
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
@@ -140,7 +140,7 @@ resources:
     memory: 512Mi
   requests:
     cpu: 15m
-    memory: 200Mi
+    memory: 350Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 probes:
@@ -219,6 +219,7 @@ config:
     quarkus.datasource.jdbc.url=${COMMAFEED_DB_URL}
     quarkus.datasource.username=${COMMAFEED_DB_USER}
     quarkus.datasource.password=${COMMAFEED_DB_PASSWORD}
+    quarkus.datasource.jdbc.acquisition-timeout=30S
 
     commafeed.database.cleanup.entries-max-age=7D
     commafeed.database.cleanup.max-feed-capacity=100
