@@ -368,7 +368,10 @@ n8n:
       labels: {}
 
     # -- Extra environment variables
-    extraEnvVars: {}
+    extraEnvVars:
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "72"
+      EXECUTIONS_DATA_PRUNE_MAX_COUNT: "100"
 
     # -- Extra secrets for environment variables
     extraSecretNamesForEnvFrom: []
