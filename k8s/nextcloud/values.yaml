@@ -821,10 +821,10 @@ nextcloud:
   resources:
     requests:
       cpu: 10m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 250m
-      memory: 256Mi
+      memory: 512Mi
 
   # -- Priority class for pods. This is the _default_
   # priority class for pods created by this deployment - it may be
