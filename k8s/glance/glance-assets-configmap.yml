@@ -6,6 +6,162 @@ metadata:
   labels:
     app.kubernetes.io/name: glance
 data:
+  prayer-widget.js: |
+    // Prayer-times widget with city autocomplete. Renders into [data-prayer-widget]
+    // using Glance's CSS classes. Open-Meteo geocoding powers the autocomplete (and
+    // yields lat/long); AlAdhan (ISNA) returns the times for the chosen coordinates.
+    // Always opens on the configured default city so it is identical on every device
+    // (no per-device persistence); the search box is an in-session lookup.
+    (function () {
+      "use strict";
+      var METHOD = 2; // ISNA
+      var DEFAULT = { label: "Farmington Hills, Michigan, US", lat: 42.4699, lon: -83.3429 };
+      var PRAYERS = [["Fajr", "Fajr"], ["Sunrise", "Sunrise"], ["Zuhr", "Dhuhr"],
+                     ["Asr", "Asr"], ["Maghrib", "Maghrib"], ["Isha", "Isha"]];
+
+      function el(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+      function pad(n) { return (n < 10 ? "0" : "") + n; }
+      function ddmmyyyy(d) { return pad(d.getDate()) + "-" + pad(d.getMonth() + 1) + "-" + d.getFullYear(); }
+      function to12(s) {
+        var p = s.split(" ")[0].split(":"), h = parseInt(p[0], 10), ap = h >= 12 ? "PM" : "AM";
+        h = h % 12; if (h === 0) h = 12;
+        return h + ":" + p[1] + " " + ap;
+      }
+
+      function injectStyle() {
+        if (document.getElementById("pw-style")) return;
+        var s = el("style"); s.id = "pw-style";
+        s.textContent =
+          ".pw-box{position:relative;width:65%;}" +
+          ".pw-box input{width:100%;background:transparent;border:none;border-bottom:1px dashed var(--color-text-subdue);outline:none;padding:0 0 2px;font-family:inherit;}" +
+          ".pw-list{position:absolute;left:0;right:0;top:100%;margin-top:5px;z-index:50;list-style:none;padding:4px 0;background:var(--color-widget-background,#1c1f26);border:1px solid var(--color-text-subdue);border-radius:6px;max-height:230px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.45);}" +
+          ".pw-list li{padding:6px 11px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}" +
+          ".pw-list li.pw-on,.pw-list li:hover{background:rgba(255,255,255,.09);}" +
+          ".pw-list li small{color:var(--color-text-subdue);margin-left:6px;}" +
+          ".pw-hide{display:none;}";
+        document.head.appendChild(s);
+      }
+
+      function build(node) {
+        injectStyle();
+        node.innerHTML = "";
+
+        var header = el("div", "flex justify-between items-end margin-bottom-15");
+        var box = el("div", "pw-box");
+        var input = el("input", "color-highlight size-h3");
+        input.type = "text"; input.spellcheck = false;
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("aria-label", "City");
+        var list = el("ul", "pw-list pw-hide");
+        box.appendChild(input); box.appendChild(list);
+        var dateEl = el("div", "color-subdue size-h6");
+        header.appendChild(box); header.appendChild(dateEl);
+
+        var grid = el("div", "flex justify-between text-center margin-top-10");
+        var timeEls = {};
+        PRAYERS.forEach(function (p) {
+          var col = el("div", "flex flex-column gap-3");
+          var name = el("div", "color-highlight size-h6"); name.textContent = p[0];
+          var time = el("div", "size-h4"); time.textContent = "--";
+          col.appendChild(name); col.appendChild(time);
+          grid.appendChild(col); timeEls[p[1]] = time;
+        });
+
+        var status = el("div", "color-subdue size-h6 margin-top-10");
+        status.style.minHeight = "1.2em";
+
+        node.appendChild(header); node.appendChild(grid); node.appendChild(status);
+
+        function render(d) {
+          dateEl.textContent = d.date || "";
+          PRAYERS.forEach(function (p) { timeEls[p[1]].textContent = d.salah[p[1]] || "--"; });
+        }
+
+        var current = DEFAULT;
+        input.value = current.label;
+
+        function fetchTimes(loc) {
+          status.textContent = "Loading…";
+          var url = "https://api.aladhan.com/v1/timings/" + ddmmyyyy(new Date()) +
+            "?latitude=" + loc.lat + "&longitude=" + loc.lon + "&method=" + METHOD;
+          fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then(function (j) {
+              var t = j.data.timings;
+              var d = { label: loc.label, lat: loc.lat, lon: loc.lon, date: j.data.date.readable, salah: {} };
+              PRAYERS.forEach(function (p) { d.salah[p[1]] = to12(t[p[1]]); });
+              render(d); status.textContent = "";
+            })
+            .catch(function () { status.textContent = "Couldn't load prayer times right now."; });
+        }
+
+        var results = [], active = -1, geoTimer;
+
+        function hideList() { list.classList.add("pw-hide"); list.innerHTML = ""; results = []; active = -1; }
+
+        function choose(r) {
+          var label = r.name + (r.admin1 ? ", " + r.admin1 : "") + (r.country_code ? ", " + r.country_code : "");
+          input.value = label;
+          hideList();
+          fetchTimes({ label: label, lat: r.latitude, lon: r.longitude });
+        }
+
+        function showList() {
+          list.innerHTML = "";
+          if (!results.length) { hideList(); return; }
+          results.forEach(function (r, i) {
+            var li = document.createElement("li");
+            li.textContent = r.name;
+            var meta = [r.admin1, r.country].filter(Boolean).join(", ");
+            if (meta) { var sm = document.createElement("small"); sm.textContent = meta; li.appendChild(sm); }
+            if (i === active) li.className = "pw-on";
+            li.addEventListener("mousedown", function (e) { e.preventDefault(); choose(r); });
+            list.appendChild(li);
+          });
+          list.classList.remove("pw-hide");
+        }
+
+        function geocode(q) {
+          q = q.trim();
+          if (q.length < 2) { hideList(); return; }
+          var url = "https://geocoding-api.open-meteo.com/v1/search?count=6&language=en&format=json&name=" + encodeURIComponent(q);
+          fetch(url).then(function (r) { return r.json(); })
+            .then(function (j) { results = j.results || []; active = -1; showList(); })
+            .catch(function () { hideList(); });
+        }
+
+        input.addEventListener("input", function () {
+          clearTimeout(geoTimer);
+          geoTimer = setTimeout(function () { geocode(input.value); }, 250);
+        });
+        input.addEventListener("keydown", function (e) {
+          if (list.classList.contains("pw-hide") || !results.length) {
+            if (e.key === "Enter") e.preventDefault();
+            return;
+          }
+          if (e.key === "ArrowDown") { e.preventDefault(); active = (active + 1) % results.length; showList(); }
+          else if (e.key === "ArrowUp") { e.preventDefault(); active = (active - 1 + results.length) % results.length; showList(); }
+          else if (e.key === "Enter") { e.preventDefault(); choose(results[active >= 0 ? active : 0]); }
+          else if (e.key === "Escape") { hideList(); }
+        });
+        input.addEventListener("blur", function () { setTimeout(hideList, 150); });
+        input.addEventListener("focus", function () { input.select(); });
+
+        fetchTimes(current);
+      }
+
+      function init(node) {
+        if (node.dataset.prayerInit) return;
+        node.dataset.prayerInit = "1";
+        try { build(node); } catch (e) { node.textContent = "Prayer times unavailable"; }
+      }
+      function scan() {
+        var nodes = document.querySelectorAll("[data-prayer-widget]");
+        for (var i = 0; i < nodes.length; i++) init(nodes[i]);
+      }
+      if (document.readyState !== "loading") scan();
+      document.addEventListener("DOMContentLoaded", scan);
+      new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+    })();
   hijri-calendar.js: |
     // Renders a Hijri calendar into [data-hijri-calendar] using Glance's own
     // calendar markup/classes so it inherits the native calendar CSS exactly,

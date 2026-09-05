@@ -30,33 +30,38 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Logo | Name | Description |
 |------|------|-------------|
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/glance.svg" width="20"> | [**Glance**](https://github.com/glanceapp/glance) | Custom dashboard for homelab management |
-| <img src="https://nextcloud.com/c/uploads/2023/02/logo_nextcloud_white.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
-| <img src="https://download.logo.wine/logo/CommaFeed/CommaFeed-Logo.wine.png" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
-| <img src="https://planka.app/cms-content/1/uploads/site/sitelogomenue.png?p=68e7ad5eeda1f" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management
-| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/2023_Obsidian_logo.svg/330px-2023_Obsidian_logo.svg.png" width="20"> | [**Obsidian**](https://obsidian.md) | Note Taking
-| <img src="https://omnitools.app/logo.png" width="20"> | [**Omni Tools**](https://omnitools.app/) | Self-hosted collection of web utilities and tools
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/commafeed.svg" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/planka.svg" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/obsidian.svg" width="20"> | [**Obsidian**](https://obsidian.md) | Note Taking
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png" width="20"> | [**Omni Tools**](https://omnitools.app/) | Self-hosted collection of web utilities and tools
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/n8n.svg" width="20"> | [**n8n**](https://n8n.io/) | Workflow automation platform |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png" width="20"> | [**Wallos**](https://github.com/ellite/Wallos) | Subscription tracker and budgeting |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextjs.svg" width="20"> | [**Portfolio**](https://husamalsheikh.com) | Personal portfolio site (Next.js) |
 
 ### Telemetry
 | Logo | Name | Description |
 |------|------|-------------|
-| <img src="https://grafana.com/static/assets/img/fav32.png" width="20"> | [**Grafana**](https://grafana.com/) | Monitoring and observability dashboard |
-| <img src="https://github.com/user-attachments/assets/9898e44d-054a-40f2-9281-cc64b5e98d07" width="20"> | [**Prometheus**](https://prometheus.io/) | Metrics collection and alerting |
-| <img src="https://grafana.com/media/docs/loki/logo-grafana-loki.png" width="20"> | [**Loki**](https://grafana.com/oss/loki/) | Log aggregation system |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/grafana.svg" width="20"> | [**Grafana**](https://grafana.com/) | Monitoring and observability dashboard |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/prometheus.svg" width="20"> | [**Prometheus**](https://prometheus.io/) | Metrics collection and alerting |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/loki.svg" width="20"> | [**Loki**](https://grafana.com/oss/loki/) | Log aggregation system |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/alloy.svg" width="20"> | [**Alloy**](https://grafana.com/oss/alloy/) | Log collection agent shipping to Loki |
 
 ### Infrastructure
 
 | Logo | Name | Description |
 |------|------|-------------|
-| <img src="https://github.com/user-attachments/assets/a838541b-c3be-4077-a74a-564ae9b91ed9" width="20"> | [**K3s**](https://k3s.io/) | Lightweight Kubernetes distribution |
-| <img src="https://www.cloudflare.com/favicon.ico" width="20"> | [**Cloudflare Tunnel**](https://www.cloudflare.com/products/tunnel/) | Secure ingress without public IP |
-| <img src="https://www.cloudflare.com/favicon.ico" width="20"> | [**Cloudflare Zero Trust**](https://developers.cloudflare.com/cloudflare-one/) | Secure site authentication |
-| <img src="https://www.postgresql.org/favicon.ico" width="20"> | [**PostgreSQL**](https://www.postgresql.org/) | Relational database for applications |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/k3s.svg" width="20"> | [**K3s**](https://k3s.io/) | Lightweight Kubernetes distribution |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cloudflare.svg" width="20"> | [**Cloudflare Tunnel**](https://www.cloudflare.com/products/tunnel/) | Secure ingress without public IP |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cloudflare-zero-trust.svg" width="20"> | [**Cloudflare Zero Trust**](https://developers.cloudflare.com/cloudflare-one/) | Secure site authentication |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/postgresql.svg" width="20"> | [**PostgreSQL**](https://www.postgresql.org/) | Relational database for applications |
 
 ### Planned Services
 Currently planned services that will be implemented in the future
 
 | Logo | Name | Description |
 |------|------|-------------|
-| <img src="https://n8n.io/favicon.ico" width="20"> | [**n8n**](https://n8n.io/) | Workflow automation platform |
-| <img src="https://velero.io/img/Velero.svg" width="20"> | [**Velero**](https://velero.io/) | Kubernetes backup and migration |
+| <img src="https://cdn.jsdelivr.net/gh/cncf/landscape@master/hosted_logos/k8up.svg" width="20"> | [**K8up**](https://k8up.io/) | Application-aware backups of PVC and database data |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/stalwart.svg" width="20"> | [**Stalwart**](https://stalw.art/) | Self-hosted mail server |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/jellyfin.svg" width="20"> | [**Jellyfin**](https://jellyfin.org/) | Self-hosted media server |
 

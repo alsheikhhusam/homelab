@@ -15,6 +15,7 @@ data:
     document:
       head: |
         <script src="/assets/hijri-calendar.js?v=3" defer></script>
+        <script src="/assets/prayer-widget.js?v=3" defer></script>
 
     pages:
       - name: Home
@@ -30,20 +31,24 @@ data:
                 location: Farmington Hills, Michigan, United States
                 units: metric
                 hour-format: 12h
-              - type: calendar
-                first-day-of-week: monday
-              - type: custom-api
-                title: Hijri Calendar
-                template: |
-                  <div class="widget-small-content-bounds">
-                    <div data-hijri-calendar></div>
-                  </div>
+              - type: group
+                widgets:
+                  - type: calendar
+                    title: Gregorian
+                    first-day-of-week: monday
+                  - type: custom-api
+                    title: Hijri
+                    template: |
+                      <div class="widget-small-content-bounds">
+                        <div data-hijri-calendar></div>
+                      </div>
 
           - size: full
             widgets:
-              - type: search
-                search-engine: duckduckgo
-                new-tab: true
+              - type: custom-api
+                title: Prayer Times
+                template: |
+                  <div data-prayer-widget></div>
               - type: bookmarks
                 groups:
                   - title: Apps
@@ -62,10 +67,10 @@ data:
                         url: https://omni.husamalsheikh.com
                   - title: Infrastructure
                     links:
-                      - title: Grafana
-                        url: https://grafana.husamalsheikh.com
                       - title: Cloudflare
                         url: https://dash.cloudflare.com/
+                      - title: Grafana
+                        url: https://grafana.husamalsheikh.com
                   - title: Personal
                     links:
                       - title: GitHub

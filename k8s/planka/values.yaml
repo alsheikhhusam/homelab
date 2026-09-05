@@ -104,14 +104,19 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 
+startupProbe:
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 60
+
 livenessProbe:
-  initialDelaySeconds: 60
   periodSeconds: 10
+  timeoutSeconds: 5
   failureThreshold: 5
 
 readinessProbe:
-  initialDelaySeconds: 30
   periodSeconds: 5
+  timeoutSeconds: 5
   failureThreshold: 3
 
 autoscaling:
@@ -144,6 +149,12 @@ postgresql:
   serviceBindings:
     enabled: true
   primary:
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 30
     resources:
       requests:
         cpu: 100m

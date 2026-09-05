@@ -204,6 +204,20 @@ loki:
   deploymentMode: SingleBinary
 
   loki:
+    startupProbe:
+      httpGet:
+        path: /ready
+        port: http-metrics
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+    livenessProbe:
+      httpGet:
+        path: /ready
+        port: http-metrics
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 5
     auth_enabled: false
     commonConfig:
       replication_factor: 1

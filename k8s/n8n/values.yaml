@@ -316,10 +316,10 @@ n8n:
     # -- This block is for setting up the resource management for the main pod more information can be found here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     resources:
       requests:
-        cpu: 10m
-        memory: 700Mi
+        cpu: 50m
+        memory: 500Mi
       limits:
-        cpu: 200m
+        cpu: 500m
         memory: 1Gi
 
     # -- This is to setup the liveness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
@@ -368,7 +368,10 @@ n8n:
       labels: {}
 
     # -- Extra environment variables
-    extraEnvVars: {}
+    extraEnvVars:
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "72"
+      EXECUTIONS_DATA_PRUNE_MAX_COUNT: "100"
 
     # -- Extra secrets for environment variables
     extraSecretNamesForEnvFrom: []
