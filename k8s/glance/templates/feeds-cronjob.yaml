@@ -1,0 +1,111 @@
+{{- if .Values.feeds.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "glance.fullname" . }}-feeds
+  labels:
+    {{- include "glance.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "glance.fullname" . }}-feeds
+  labels:
+    {{- include "glance.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: [{{ include "glance.fullname" . }}-feeds]
+    verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "glance.fullname" . }}-feeds
+  labels:
+    {{- include "glance.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "glance.fullname" . }}-feeds
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "glance.fullname" . }}-feeds
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "glance.fullname" . }}-feeds-script
+  labels:
+    {{- include "glance.labels" . | nindent 4 }}
+data:
+  fetch_feeds.py: |
+    {{- .Files.Get "files/fetch_feeds.py" | nindent 4 }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "glance.fullname" . }}-feeds
+  labels:
+    {{- include "glance.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.feeds.schedule | quote }}
+  timeZone: {{ .Values.feeds.timeZone | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: {{ .Values.feeds.activeDeadlineSeconds }}
+      template:
+        metadata:
+          labels:
+            {{- include "glance.selectorLabels" . | nindent 12 }}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "glance.fullname" . }}-feeds
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+          containers:
+            - name: fetch
+              image: {{ .Values.feeds.image | quote }}
+              command: ["python3", "/script/fetch_feeds.py"]
+              env:
+                - name: SUBREDDITS
+                  value: {{ join "," .Values.feeds.subreddits | quote }}
+                - name: CONFIGMAP_NAME
+                  value: {{ include "glance.fullname" . }}-feeds
+                - name: FEED_LIMIT
+                  value: {{ .Values.feeds.limit | quote }}
+                - name: FETCH_SPACING
+                  value: {{ .Values.feeds.spacing | quote }}
+                - name: FETCH_RETRIES
+                  value: {{ .Values.feeds.retries | quote }}
+                - name: RETRY_WAIT
+                  value: {{ .Values.feeds.retryWait | quote }}
+              {{- with .Values.feeds.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: script
+                  mountPath: /script
+                  readOnly: true
+          volumes:
+            - name: script
+              configMap:
+                name: {{ include "glance.fullname" . }}-feeds-script
+{{- end }}

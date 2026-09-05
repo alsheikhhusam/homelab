@@ -161,6 +161,34 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
+feeds:
+  enabled: true
+  schedule: "17 * * * *"
+  timeZone: Etc/UTC
+  image: python:3.12-alpine
+  activeDeadlineSeconds: 1800
+  subreddits:
+    - Azure
+    - Cloud
+    - devops
+    - sysadmin
+    - homelab
+    - selfhosted
+    - kubernetes
+    - technology
+    - guns
+  limit: 15
+  spacing: 60
+  retries: 2
+  retryWait: 60
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 96Mi
+
 volumes: []
 # - name: foo
 #   secret:

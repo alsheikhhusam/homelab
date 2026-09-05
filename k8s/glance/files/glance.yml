@@ -129,58 +129,85 @@ pages:
           - type: group
             widgets:
               - type: rss
-                title: r/sysadmin
-                title-url: https://www.reddit.com/r/sysadmin/
-                cache: 61m
+                title: r/Azure
+                title-url: https://www.reddit.com/r/Azure/
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/sysadmin/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/Azure.xml
+                    hide-description: true
+              - type: rss
+                title: r/Cloud
+                title-url: https://www.reddit.com/r/Cloud/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/Cloud.xml
+                    hide-description: true
+              - type: rss
+                title: r/devops
+                title-url: https://www.reddit.com/r/devops/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/devops.xml
+                    hide-description: true
+              - type: rss
+                title: r/sysadmin
+                title-url: https://www.reddit.com/r/sysadmin/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/sysadmin.xml
                     hide-description: true
               - type: rss
                 title: r/homelab
                 title-url: https://www.reddit.com/r/homelab/
-                cache: 67m
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/homelab/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/homelab.xml
                     hide-description: true
               - type: rss
                 title: r/selfhosted
                 title-url: https://www.reddit.com/r/selfhosted/
-                cache: 71m
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/selfhosted/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/selfhosted.xml
                     hide-description: true
               - type: rss
                 title: r/kubernetes
                 title-url: https://www.reddit.com/r/kubernetes/
-                cache: 73m
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/kubernetes/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/kubernetes.xml
                     hide-description: true
               - type: rss
                 title: r/technology
                 title-url: https://www.reddit.com/r/technology/
-                cache: 79m
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/technology/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/technology.xml
                     hide-description: true
               - type: rss
                 title: r/guns
                 title-url: https://www.reddit.com/r/guns/
-                cache: 83m
+                cache: 15m
                 limit: 15
                 collapse-after: 5
                 feeds:
-                  - url: https://www.reddit.com/r/guns/hot/.rss?limit=15
+                  - url: http://localhost:8080/assets/feeds/guns.xml
                     hide-description: true
               - type: hacker-news
 
