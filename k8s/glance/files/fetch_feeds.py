@@ -6,10 +6,11 @@ import time
 import urllib.error
 import urllib.request
 
-SUBS = [s.strip() for s in os.environ["SUBREDDITS"].split(",") if s.strip()]
+GROUPS = [[s for s in g.split(",") if s] for g in os.environ["FEED_GROUPS"].split(";") if g]
 CONFIGMAP = os.environ["CONFIGMAP_NAME"]
 LIMIT = int(os.environ.get("FEED_LIMIT", "15"))
-SPACING = int(os.environ.get("FETCH_SPACING", "45"))
+GROUP_LIMIT = int(os.environ.get("GROUP_LIMIT", "100"))
+SPACING = int(os.environ.get("FETCH_SPACING", "60"))
 RETRIES = int(os.environ.get("FETCH_RETRIES", "2"))
 RETRY_WAIT = int(os.environ.get("RETRY_WAIT", "60"))
 USER_AGENT = os.environ.get("FEED_USER_AGENT", "glance-homelab-feeds/1.0")
@@ -25,6 +26,11 @@ with open(SA + "/token") as fh:
 K8S_CTX = ssl.create_default_context(cafile=SA + "/ca.crt")
 CM_PATH = "/api/v1/namespaces/%s/configmaps" % NAMESPACE
 
+ENTRY_RE = re.compile(r"<entry>.*?</entry>", re.S)
+CATEGORY_RE = re.compile(r"<category[^>]*term=\"([^\"]+)\"")
+FEED_OPEN_RE = re.compile(r"<feed[^>]*>")
+CONTENT_RE = re.compile(r"<content type=\"html\">.*?</content>", re.S)
+
 
 def k8s(method, path, body=None, content_type="application/json"):
     req = urllib.request.Request(
@@ -37,23 +43,51 @@ def k8s(method, path, body=None, content_type="application/json"):
         return json.load(resp)
 
 
-def fetch(sub):
-    url = "https://www.reddit.com/r/%s/hot/.rss?limit=%d" % (sub, LIMIT)
+def fetch(group):
+    url = "https://www.reddit.com/r/%s/hot/.rss?limit=%d" % ("+".join(group), GROUP_LIMIT)
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     for attempt in range(RETRIES + 1):
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=40) as resp:
                 return resp.read().decode("utf-8")
         except urllib.error.HTTPError as err:
             if err.code in (403, 429) and attempt < RETRIES:
-                print("  r/%s %d, retrying in %ds" % (sub, err.code, RETRY_WAIT), flush=True)
+                print("  %s %d, retrying in %ds" % ("+".join(group), err.code, RETRY_WAIT), flush=True)
                 time.sleep(RETRY_WAIT)
                 continue
             raise
 
 
-def strip_content(xml):
-    return re.sub(r"<content type=\"html\">.*?</content>", "", xml, flags=re.S)
+def split_group(xml, group):
+    feed_open = FEED_OPEN_RE.search(xml)
+    if not feed_open:
+        raise ValueError("no <feed> element in response")
+    header = feed_open.group(0)
+
+    wanted = {name.lower(): name for name in group}
+    buckets = {name: [] for name in group}
+
+    for entry in ENTRY_RE.findall(xml):
+        term = CATEGORY_RE.search(entry)
+        if not term:
+            continue
+        name = wanted.get(term.group(1).lower())
+        if name is None:
+            continue
+        if len(buckets[name]) < LIMIT:
+            buckets[name].append(CONTENT_RE.sub("", entry))
+
+    return header, buckets
+
+
+def build_feed(header, name, entries):
+    return "".join([
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+        header,
+        "<title>r/%s</title>" % name,
+        "".join(entries),
+        "</feed>",
+    ])
 
 
 def load_existing():
@@ -69,19 +103,24 @@ existing = load_existing()
 data = dict(existing or {})
 updated, kept = [], []
 
-for index, sub in enumerate(SUBS):
+for index, group in enumerate(GROUPS):
     if index:
         time.sleep(SPACING)
+    label = "+".join(group)
     try:
-        xml = strip_content(fetch(sub))
-        entries = xml.count("<entry>")
-        if entries == 0:
-            raise ValueError("feed returned 0 entries")
-        data["%s.xml" % sub] = xml
-        updated.append("%s(%d)" % (sub, entries))
+        header, buckets = split_group(fetch(group), group)
     except Exception as err:
-        print("  r/%s FAILED: %s" % (sub, err), flush=True)
-        kept.append(sub)
+        print("  %s FAILED: %s" % (label, err), flush=True)
+        kept.extend(group)
+        continue
+    for name in group:
+        entries = buckets[name]
+        if not entries:
+            print("  r/%s no entries in group response" % name, flush=True)
+            kept.append(name)
+            continue
+        data["%s.xml" % name] = build_feed(header, name, entries)
+        updated.append("%s(%d)" % (name, len(entries)))
 
 if existing is None:
     k8s("POST", CM_PATH, {

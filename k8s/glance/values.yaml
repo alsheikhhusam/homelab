@@ -166,17 +166,13 @@ feeds:
   schedule: "17 * * * *"
   timeZone: Etc/UTC
   image: python:3.12-alpine
-  activeDeadlineSeconds: 1800
-  subreddits:
-    - Azure
-    - Cloud
-    - devops
-    - sysadmin
-    - homelab
-    - selfhosted
-    - kubernetes
-    - technology
-    - guns
+  activeDeadlineSeconds: 900
+  groups:
+    - [Cloud, kubernetes, devops]
+    - [Azure, selfhosted]
+    - [sysadmin, guns]
+    - [homelab, technology]
+  groupLimit: 100
   limit: 15
   spacing: 60
   retries: 2

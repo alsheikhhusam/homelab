@@ -79,8 +79,10 @@ spec:
               image: {{ .Values.feeds.image | quote }}
               command: ["python3", "/script/fetch_feeds.py"]
               env:
-                - name: SUBREDDITS
-                  value: {{ join "," .Values.feeds.subreddits | quote }}
+                - name: FEED_GROUPS
+                  value: {{ $g := list }}{{- range .Values.feeds.groups }}{{ $g = append $g (join "," .) }}{{- end }}{{ join ";" $g | quote }}
+                - name: GROUP_LIMIT
+                  value: {{ .Values.feeds.groupLimit | quote }}
                 - name: CONFIGMAP_NAME
                   value: {{ include "glance.fullname" . }}-feeds
                 - name: FEED_LIMIT
