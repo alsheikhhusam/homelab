@@ -166,7 +166,7 @@ feeds:
   schedule: "17 * * * *"
   timeZone: Etc/UTC
   image: python:3.12-alpine
-  activeDeadlineSeconds: 900
+  activeDeadlineSeconds: 1200
   groups:
     - [Cloud, kubernetes, devops]
     - [Azure, selfhosted]
