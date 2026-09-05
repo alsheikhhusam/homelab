@@ -15,7 +15,7 @@ data:
     document:
       head: |
         <script src="/assets/hijri-calendar.js?v=3" defer></script>
-        <script src="/assets/prayer-widget.js?v=3" defer></script>
+        <script src="/assets/prayer-widget.js?v=6" defer></script>
 
     pages:
       - name: Home
@@ -137,18 +137,60 @@ data:
                       - UCgGw5WSITWvDISNjydXPW3A
               - type: group
                 widgets:
-                  - type: reddit
-                    subreddit: sysadmin
-                  - type: reddit
-                    subreddit: homelab
-                  - type: reddit
-                    subreddit: selfhosted
-                  - type: reddit
-                    subreddit: kubernetes
-                  - type: reddit
-                    subreddit: technology
-                  - type: reddit
-                    subreddit: guns
+                  - type: rss
+                    title: r/sysadmin
+                    title-url: https://www.reddit.com/r/sysadmin/
+                    cache: 61m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/sysadmin/hot/.rss?limit=15
+                        hide-description: true
+                  - type: rss
+                    title: r/homelab
+                    title-url: https://www.reddit.com/r/homelab/
+                    cache: 67m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/homelab/hot/.rss?limit=15
+                        hide-description: true
+                  - type: rss
+                    title: r/selfhosted
+                    title-url: https://www.reddit.com/r/selfhosted/
+                    cache: 71m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/selfhosted/hot/.rss?limit=15
+                        hide-description: true
+                  - type: rss
+                    title: r/kubernetes
+                    title-url: https://www.reddit.com/r/kubernetes/
+                    cache: 73m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/kubernetes/hot/.rss?limit=15
+                        hide-description: true
+                  - type: rss
+                    title: r/technology
+                    title-url: https://www.reddit.com/r/technology/
+                    cache: 79m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/technology/hot/.rss?limit=15
+                        hide-description: true
+                  - type: rss
+                    title: r/guns
+                    title-url: https://www.reddit.com/r/guns/
+                    cache: 83m
+                    limit: 15
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.reddit.com/r/guns/hot/.rss?limit=15
+                        hide-description: true
                   - type: hacker-news
 
           - size: small
