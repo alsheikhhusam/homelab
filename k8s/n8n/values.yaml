@@ -316,8 +316,8 @@ n8n:
     # -- This block is for setting up the resource management for the main pod more information can be found here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     resources:
       requests:
-        cpu: 100m
-        memory: 700Mi
+        cpu: 50m
+        memory: 500Mi
       limits:
         cpu: 500m
         memory: 1Gi
