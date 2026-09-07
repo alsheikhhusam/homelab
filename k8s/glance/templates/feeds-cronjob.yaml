@@ -93,6 +93,10 @@ spec:
                   value: {{ .Values.feeds.retries | quote }}
                 - name: RETRY_WAIT
                   value: {{ .Values.feeds.retryWait | quote }}
+                - name: TIME_BUDGET
+                  value: {{ .Values.feeds.timeBudget | quote }}
+                - name: REQUEST_TIMEOUT
+                  value: {{ .Values.feeds.requestTimeout | quote }}
               {{- with .Values.feeds.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}

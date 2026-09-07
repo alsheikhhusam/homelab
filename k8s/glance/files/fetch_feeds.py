@@ -14,6 +14,14 @@ SPACING = int(os.environ.get("FETCH_SPACING", "60"))
 RETRIES = int(os.environ.get("FETCH_RETRIES", "2"))
 RETRY_WAIT = int(os.environ.get("RETRY_WAIT", "60"))
 USER_AGENT = os.environ.get("FEED_USER_AGENT", "glance-homelab-feeds/1.0")
+TIME_BUDGET = int(os.environ.get("TIME_BUDGET", "900"))
+REQUEST_TIMEOUT = int(os.environ.get("REQUEST_TIMEOUT", "40"))
+
+START = time.monotonic()
+
+
+def remaining():
+    return TIME_BUDGET - (time.monotonic() - START)
 
 SA = "/var/run/secrets/kubernetes.io/serviceaccount"
 API = "https://kubernetes.default.svc"
@@ -47,11 +55,15 @@ def fetch(group):
     url = "https://www.reddit.com/r/%s/hot/.rss?limit=%d" % ("+".join(group), GROUP_LIMIT)
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     for attempt in range(RETRIES + 1):
+        left = remaining()
+        if left < 10:
+            raise TimeoutError("time budget exhausted")
         try:
-            with urllib.request.urlopen(req, timeout=40) as resp:
+            with urllib.request.urlopen(req, timeout=min(REQUEST_TIMEOUT, left)) as resp:
                 return resp.read().decode("utf-8")
         except urllib.error.HTTPError as err:
-            if err.code in (403, 429) and attempt < RETRIES:
+            retriable = err.code in (403, 429) and attempt < RETRIES
+            if retriable and remaining() > RETRY_WAIT + 10:
                 print("  %s %d, retrying in %ds" % ("+".join(group), err.code, RETRY_WAIT), flush=True)
                 time.sleep(RETRY_WAIT)
                 continue
@@ -103,8 +115,15 @@ existing = load_existing()
 data = dict(existing or {})
 updated, kept = [], []
 
+skipped = []
+
 for index, group in enumerate(GROUPS):
     if index:
+        if remaining() < SPACING + 15:
+            skipped = [name for rest in GROUPS[index:] for name in rest]
+            print("  time budget reached, skipping: %s" % " ".join(skipped), flush=True)
+            kept.extend(skipped)
+            break
         time.sleep(SPACING)
     label = "+".join(group)
     try:
@@ -135,6 +154,7 @@ else:
 
 print("updated: %s" % (" ".join(updated) or "none"), flush=True)
 print("kept previous: %s" % (" ".join(kept) or "none"), flush=True)
+print("elapsed: %ds of %ds budget" % (time.monotonic() - START, TIME_BUDGET), flush=True)
 
 if not updated:
     raise SystemExit(1)

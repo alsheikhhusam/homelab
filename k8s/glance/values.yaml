@@ -177,6 +177,8 @@ feeds:
   spacing: 60
   retries: 2
   retryWait: 60
+  timeBudget: 900
+  requestTimeout: 40
   resources:
     requests:
       cpu: 10m
