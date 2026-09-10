@@ -560,11 +560,11 @@ nextcloud:
         failureThreshold: 30
       resources:
         requests:
-          cpu: 20m
-          memory: 64Mi
+          cpu: 100m
+          memory: 256Mi
         limits:
-          cpu: 200m
-          memory: 128Mi
+          cpu: 1000m
+          memory: 512Mi
 
       persistence:
         enabled: true
@@ -600,26 +600,34 @@ nextcloud:
   ##
 
   redis:
-    enabled: false
+    enabled: true
+    architecture: standalone
     image:
       registry: docker.io
       repository: bitnamilegacy/redis
     auth:
       enabled: true
-      password: "changeme"
+      password: ""
       # name of an existing secret with Redis® credentials (instead of auth.password), must be created ahead of time
-      existingSecret: ""
+      existingSecret: "nextcloud-redis"
       # Password key to be retrieved from existing secret
-      existingSecretPasswordKey: ""
+      existingSecretPasswordKey: "redis-password"
     # Since Redis is used for caching only, you might want to use a storageClass with different reclaim policy and backup settings
     global:
       storageClass: ""
     master:
       persistence:
-        enabled: true
+        enabled: false
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
     replica:
       persistence:
-        enabled: true
+        enabled: false
 
   ##
   ## Collabora chart configuration
@@ -826,11 +834,11 @@ nextcloud:
 
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 300m
+      memory: 512Mi
     limits:
-      cpu: 250m
-      memory: 1Gi
+      cpu: 1000m
+      memory: 2Gi
 
   # -- Priority class for pods. This is the _default_
   # priority class for pods created by this deployment - it may be
