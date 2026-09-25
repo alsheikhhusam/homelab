@@ -1,0 +1,78 @@
+couchdb:
+  clusterSize: 1
+  fullnameOverride: obsidian
+
+  createAdminSecret: false
+  extraSecretName: obsidian-couchdb-secret
+  adminUsernameKey: adminUsername
+  adminPasswordKey: adminPassword
+  cookieAuthSecretKey: cookieAuthSecret
+  erlangCookieKey: erlangCookie
+
+  networkPolicy:
+    enabled: true
+
+  persistentVolume:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+
+  image:
+    repository: couchdb
+    tag: 3.5.1
+    pullPolicy: IfNotPresent
+
+  initImage:
+    repository: busybox
+    tag: "1.37.0"
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 20m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  couchdbConfig:
+    couchdb:
+      uuid: 893c6b41c8f347b99215167d791a54ca
+      single_node: true
+      max_document_size: 50000000
+    cluster:
+      "n": 1
+    chttpd:
+      bind_address: any
+      require_valid_user: true
+      max_http_request_size: 4294967296
+      enable_cors: true
+    chttpd_auth:
+      require_valid_user: true
+      authentication_redirect: /_utils/session.html
+    httpd:
+      WWW-Authenticate: Basic realm="couchdb"
+      enable_cors: true
+    cors:
+      origins: app://obsidian.md,capacitor://localhost,http://localhost
+      credentials: true
+      headers: accept, authorization, content-type, origin, referer
+      methods: GET, PUT, POST, HEAD, DELETE
+      max_age: 3600
