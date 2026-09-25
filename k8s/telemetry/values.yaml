@@ -1,3 +1,14 @@
+alertmanagerConfig:
+  name: alertmanager-global
+  email:
+    to: alsheikhhusam@gmail.com
+    from: thejimscott99@gmail.com
+    smarthost: smtp.gmail.com:587
+    authUsername: thejimscott99@gmail.com
+    existingSecret:
+      name: grafana-smtp
+      key: password
+
 pvcUsageExporter:
   enabled: true
   schedule: "*/15 * * * *"
@@ -7,9 +18,18 @@ pvcUsageExporter:
 # kube-prometheus-stack: Grafana + Prometheus + node-exporter + kube-state-metrics
 # -----------------------------------------------------------------------------
 kube-prometheus-stack:
-  # Homelab does not need paging/alert routing. Drop Alertmanager to save a pod.
   alertmanager:
-    enabled: false
+    enabled: true
+    alertmanagerSpec:
+      alertmanagerConfiguration:
+        name: alertmanager-global
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
 
   kubeControllerManager:
     enabled: false
@@ -22,7 +42,6 @@ kube-prometheus-stack:
     disabled:
       Watchdog: true
       InfoInhibitor: true
-      PrometheusNotConnectedToAlertmanagers: true
 
   grafana:
     # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).

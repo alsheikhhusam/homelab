@@ -1,0 +1,11 @@
+apiVersion: v2
+name: obsidian
+description: Thin wrapper that pulls the upstream apache/couchdb chart as the Obsidian Self-hosted LiveSync backend.
+type: application
+version: 0.1.0
+appVersion: "3.5.1"
+
+dependencies:
+  - name: couchdb
+    version: 4.6.3
+    repository: https://apache.github.io/couchdb-helm
