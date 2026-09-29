@@ -30,7 +30,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | Logo | Name | Description |
 |------|------|-------------|
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/glance.svg" width="20"> | [**Glance**](https://github.com/glanceapp/glance) | Custom dashboard for homelab management |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextcloud.svg" width="20"> | [**Nextcloud**](https://nextcloud.com) | File sharing and document editing
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/open-cloud.svg" width="20"> | [**OpenCloud**](https://opencloud.eu) | File sync and sharing
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/commafeed.svg" width="20"> | [**Commafeed**](https://commafeed.com) | News Feed
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/planka.svg" width="20"> | [**Planka**](https://planka.app/) | Project Tracking and Management
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/obsidian.svg" width="20"> | [**Obsidian**](https://obsidian.md) | Note Taking
