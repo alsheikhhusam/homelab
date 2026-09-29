@@ -4,9 +4,9 @@
 This repo contains all the configurations and documentation for my homelab. The purpose of this homelab is to learn more about home servers and setting up kubernetes clusters and to have fun. While this will be practical in many ways, the main goal is education. Some concepts and principles that are kept in mind while designing this is backup strategies, security, scalability and ease of deployment and maintenance.
 
 ## 📌 Features
-- **Secure Remote Access** via Cloudflare Tunnel (no static IP required)
+- **Secure Remote Access** via Cloudflare Tunnel
 - **Glance Dashboard** as centralized management interface
-- **Authentication** through Cloudflare Access
+- **Authentication** through Cloudflare X
 - **Persistent Storage** for all configurations
 - **Monitoring** with Prometheus/Grafana
 - **Logging** with Loki/Alloy
