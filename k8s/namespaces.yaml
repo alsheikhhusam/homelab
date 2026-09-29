@@ -46,7 +46,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nextcloud
+  name: opencloud
 ---
 apiVersion: v1
 kind: Namespace

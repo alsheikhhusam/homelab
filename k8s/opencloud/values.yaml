@@ -1,0 +1,62 @@
+image:
+  repository: opencloudeu/opencloud
+  pullPolicy: IfNotPresent
+  tag: ""
+
+fullnameOverride: "opencloud"
+
+url: https://opencloud.husamalsheikh.com
+
+adminPassword:
+  existingSecret: opencloud-admin
+  key: password
+
+extraEnv:
+  OC_LOG_LEVEL: info
+  OC_INSECURE: "false"
+  PROXY_TLS: "false"
+  IDM_CREATE_DEMO_USERS: "false"
+  OC_SPACES_MAX_QUOTA: "24696061952"
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+service:
+  type: ClusterIP
+  port: 9200
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+startupProbe:
+  httpGet:
+    path: /
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 24
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+persistence:
+  size: 25Gi
+  hostPath: /mnt/k8s/opencloud/data

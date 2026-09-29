@@ -44,8 +44,8 @@ pages:
             groups:
               - title: Apps
                 links:
-                  - title: Nextcloud
-                    url: https://next.husamalsheikh.com
+                  - title: OpenCloud
+                    url: https://opencloud.husamalsheikh.com
                   - title: Planka
                     url: https://planka.husamalsheikh.com
                   - title: n8n
@@ -86,10 +86,10 @@ pages:
                 url: https://husamalsheikh.com
                 check-url: http://portfolio.portfolio.svc.cluster.local:80
                 icon: https://cdn.jsdelivr.net/npm/lucide-static/icons/briefcase.svg
-              - title: Nextcloud
-                url: https://next.husamalsheikh.com
-                check-url: http://nextcloud.nextcloud.svc.cluster.local:80
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextcloud.png
+              - title: OpenCloud
+                url: https://opencloud.husamalsheikh.com
+                check-url: http://opencloud.opencloud.svc.cluster.local:9200
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/open-cloud.png
               - title: Planka
                 url: https://planka.husamalsheikh.com
                 check-url: http://planka.planka.svc.cluster.local:1337
