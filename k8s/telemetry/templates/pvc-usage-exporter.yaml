@@ -11,8 +11,6 @@ data:
     # namespace/claim                         assigned-size  (matched by prefix)
     n8n/n8n-main-persistence                   5Gi
     planka/data-planka-postgresql-0            1Gi
-    nextcloud/nextcloud-nextcloud              10Gi
-    nextcloud/data-nextcloud-postgresql-0      1Gi
     telemetry/storage-loki-0                   3Gi
     telemetry/grafana                          1Gi
     commafeed/commafeed-pvc                    1Gi

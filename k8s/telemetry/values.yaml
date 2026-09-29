@@ -2,11 +2,11 @@ alertmanagerConfig:
   name: alertmanager-global
   email:
     to: alsheikhhusam@gmail.com
-    from: thejimscott99@gmail.com
-    smarthost: smtp.gmail.com:587
-    authUsername: thejimscott99@gmail.com
+    from: Homelab Alerts <alerts@husamalsheikh.com>
+    smarthost: smtp.resend.com:587
+    authUsername: resend
     existingSecret:
-      name: grafana-smtp
+      name: resend-smtp
       key: password
   quietHoursUTC:
     start: "02:00"
@@ -89,17 +89,17 @@ kube-prometheus-stack:
         jsonData:
           tlsSkipVerify: true
 
-    # SMTP credentials live in the grafana-smtp secret (created out-of-band):
-    #   kubectl -n telemetry create secret generic grafana-smtp \
-    #     --from-literal=user='<smtp-user>' --from-literal=password='<smtp-pass>'
+    # SMTP credentials live in the resend-smtp secret (created out-of-band):
+    #   kubectl -n telemetry create secret generic resend-smtp \
+    #     --from-literal=user=resend --from-literal=password='<resend-api-key>'
     grafana.ini:
       smtp:
         enabled: true
-        host: smtp.gmail.com:587
-        from_address: thejimscott99@gmail.com
+        host: smtp.resend.com:587
+        from_address: alerts@husamalsheikh.com
         from_name: Homelab Grafana
     smtp:
-      existingSecret: grafana-smtp
+      existingSecret: resend-smtp
       userKey: user
       passwordKey: password
 
