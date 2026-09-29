@@ -8,6 +8,9 @@ alertmanagerConfig:
     existingSecret:
       name: grafana-smtp
       key: password
+  quietHoursUTC:
+    start: "02:00"
+    end: "13:00"
 
 pvcUsageExporter:
   enabled: true
@@ -42,6 +45,21 @@ kube-prometheus-stack:
     disabled:
       Watchdog: true
       InfoInhibitor: true
+      KubeJobFailed: true
+
+  additionalPrometheusRulesMap:
+    cronjobs:
+      groups:
+        - name: cronjobs
+          rules:
+            - alert: CronJobNotSucceeding
+              expr: time() - kube_cronjob_status_last_successful_time > 3 * 3600
+              for: 10m
+              labels:
+                severity: warning
+              annotations:
+                summary: CronJob has not succeeded in over 3 hours.
+                description: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago.
 
   grafana:
     # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).

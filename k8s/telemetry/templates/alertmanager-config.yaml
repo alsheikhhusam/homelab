@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ .Values.alertmanagerConfig.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  route:
+    receiver: email
+    groupBy: ["alertname", "namespace"]
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+    routes:
+      - receiver: "null"
+        matchers:
+          - name: severity
+            value: info
+            matchType: "="
+      - receiver: email
+        matchers:
+          - name: severity
+            value: warning
+            matchType: "="
+        muteTimeIntervals:
+          - quiet-hours
+  muteTimeIntervals:
+    - name: quiet-hours
+      timeIntervals:
+        - times:
+            - startTime: {{ .Values.alertmanagerConfig.quietHoursUTC.start | quote }}
+              endTime: {{ .Values.alertmanagerConfig.quietHoursUTC.end | quote }}
+  receivers:
+    - name: "null"
+    - name: email
+      emailConfigs:
+        - to: {{ .Values.alertmanagerConfig.email.to }}
+          from: {{ .Values.alertmanagerConfig.email.from }}
+          smarthost: {{ .Values.alertmanagerConfig.email.smarthost }}
+          authUsername: {{ .Values.alertmanagerConfig.email.authUsername }}
+          authPassword:
+            name: {{ .Values.alertmanagerConfig.email.existingSecret.name }}
+            key: {{ .Values.alertmanagerConfig.email.existingSecret.key }}
+          requireTLS: true
+          sendResolved: true
+  inhibitRules:
+    - sourceMatch:
+        - name: severity
+          value: critical
+          matchType: "="
+      targetMatch:
+        - name: severity
+          value: warning
+          matchType: "="
+      equal: ["alertname", "namespace"]
