@@ -59,9 +59,11 @@ pages:
               - title: Infrastructure
                 links:
                   - title: Cloudflare
-                    url: https://dash.cloudflare.com/
+                    url: https://dash.cloudflare.com
                   - title: Grafana
                     url: https://grafana.husamalsheikh.com
+                  - title: Resend
+                    url: https://resend.com
               - title: Personal
                 links:
                   - title: GitHub
