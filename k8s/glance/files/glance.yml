@@ -56,6 +56,8 @@ pages:
                     url: https://wallos.husamalsheikh.com
                   - title: Omni Tools
                     url: https://omni.husamalsheikh.com
+                  - title: BookOrbit
+                    url: https://orbit.husamalsheikh.com
               - title: Infrastructure
                 links:
                   - title: Cloudflare
@@ -112,6 +114,10 @@ pages:
                 url: https://omni.husamalsheikh.com
                 check-url: http://omni-tools.omni.svc.cluster.local:80
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png
+              - title: BookOrbit
+                url: https://orbit.husamalsheikh.com
+                check-url: http://bookorbit.bookorbit.svc.cluster.local:3000/api/v1/health
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bookorbit.png
               - title: Grafana
                 url: https://grafana.husamalsheikh.com
                 check-url: http://grafana.telemetry.svc.cluster.local:80

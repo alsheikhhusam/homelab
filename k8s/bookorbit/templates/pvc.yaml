@@ -1,0 +1,38 @@
+{{- range $name, $size := .Values.persistence.volumes }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "bookorbit.fullname" $ }}-{{ $name }}
+  labels:
+    {{- include "bookorbit.labels" $ | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ $size | quote }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+  claimRef:
+    namespace: {{ $.Release.Namespace }}
+    name: {{ include "bookorbit.fullname" $ }}-{{ $name }}
+  hostPath:
+    path: {{ $.Values.persistence.hostPath }}/{{ $name }}
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "bookorbit.fullname" $ }}-{{ $name }}
+  labels:
+    {{- include "bookorbit.labels" $ | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ $size | quote }}
+  storageClassName: ""
+  volumeName: {{ include "bookorbit.fullname" $ }}-{{ $name }}
+---
+{{- end }}

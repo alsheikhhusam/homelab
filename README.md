@@ -37,6 +37,7 @@ This repo contains all the configurations and documentation for my homelab. The 
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png" width="20"> | [**Omni Tools**](https://omnitools.app/) | Self-hosted collection of web utilities and tools
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/n8n.svg" width="20"> | [**n8n**](https://n8n.io/) | Workflow automation platform |
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png" width="20"> | [**Wallos**](https://github.com/ellite/Wallos) | Subscription tracker and budgeting |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bookorbit.png" width="20"> | [**BookOrbit**](https://github.com/bookorbit/bookorbit) | Ebook, audiobook and comic library |
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/nextjs.svg" width="20"> | [**Portfolio**](https://husamalsheikh.com) | Personal portfolio site (Next.js) |
 
 ### Telemetry

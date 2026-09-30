@@ -1,0 +1,80 @@
+image:
+  repository: ghcr.io/bookorbit/bookorbit
+  pullPolicy: IfNotPresent
+  tag: ""
+
+fullnameOverride: "bookorbit"
+
+url: https://orbit.husamalsheikh.com
+
+existingSecret: bookorbit-secrets
+
+extraEnv:
+  TZ: America/New_York
+  LIBRARY_BROWSE_ROOT: /books
+  LOG_LEVEL: info
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+startupProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 24
+livenessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+readinessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+persistence:
+  hostPath: /mnt/k8s/bookorbit
+  volumes:
+    data: 5Gi
+    books: 20Gi
+    postgres: 5Gi
+
+postgres:
+  image: pgvector/pgvector:pg18
+  user: bookorbit
+  database: bookorbit
+  resources:
+    requests:
+      cpu: 25m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
