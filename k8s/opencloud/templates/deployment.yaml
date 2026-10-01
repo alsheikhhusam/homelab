@@ -13,6 +13,8 @@ spec:
       {{- include "opencloud.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "opencloud.labels" . | nindent 8 }}
     spec:
@@ -33,6 +35,22 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.adminPassword.existingSecret }}
                   key: {{ .Values.adminPassword.key }}
+            - name: OC_ADD_RUN_SERVICES
+              value: collaboration
+            - name: COLLABORATION_WOPI_SRC
+              value: {{ .Values.url | quote }}
+            - name: COLLABORATION_APP_NAME
+              value: {{ .Values.office.name | quote }}
+            - name: COLLABORATION_APP_PRODUCT
+              value: OnlyOffice
+            - name: COLLABORATION_APP_ADDR
+              value: {{ .Values.office.url | quote }}
+            - name: COLLABORATION_APP_ICON
+              value: "{{ .Values.office.url }}/web-apps/apps/documenteditor/main/resources/img/favicon.ico"
+            - name: COLLABORATION_APP_PROOF_DISABLE
+              value: "true"
+            - name: PROXY_CSP_CONFIG_FILE_LOCATION
+              value: /etc/opencloud/csp.yaml
             {{- range $name, $value := .Values.extraEnv }}
             - name: {{ $name }}
               value: {{ $value | quote }}
@@ -64,7 +82,16 @@ spec:
             - name: data
               mountPath: /var/lib/opencloud
               subPath: data
+            - name: config
+              mountPath: /etc/opencloud/csp.yaml
+              subPath: csp.yaml
+            - name: config
+              mountPath: /etc/opencloud/app-registry.yaml
+              subPath: app-registry.yaml
       volumes:
+        - name: config
+          configMap:
+            name: {{ include "opencloud.fullname" . }}-config
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "opencloud.fullname" . }}-data

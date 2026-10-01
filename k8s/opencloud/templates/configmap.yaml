@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opencloud.fullname" . }}-config
+  labels:
+    {{- include "opencloud.labels" . | nindent 4 }}
+data:
+  csp.yaml: |
+    directives:
+      frame-src:
+        - '{{ .Values.office.url }}/'
+      img-src:
+        - '{{ .Values.office.url }}/'
+  app-registry.yaml: |
+    app_registry:
+      mimetypes:
+        - mime_type: application/pdf
+          extension: pdf
+          name: PDF
+          description: PDF document
+        - mime_type: application/vnd.oasis.opendocument.text
+          extension: odt
+          name: Document
+          description: OpenDocument text document
+          allow_creation: true
+        - mime_type: application/vnd.oasis.opendocument.spreadsheet
+          extension: ods
+          name: Spreadsheet
+          description: OpenDocument spreadsheet document
+          allow_creation: true
+        - mime_type: application/vnd.oasis.opendocument.presentation
+          extension: odp
+          name: Presentation
+          description: OpenDocument presentation document
+          allow_creation: true
+        - mime_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+          extension: docx
+          name: Microsoft Word
+          description: Microsoft Word document
+          default_app: {{ .Values.office.name }}
+          allow_creation: true
+        - mime_type: application/vnd.openxmlformats-officedocument.wordprocessingml.form
+          extension: docxf
+          name: Form Document
+          description: Form Document
+          default_app: {{ .Values.office.name }}
+        - mime_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+          extension: xlsx
+          name: Microsoft Excel
+          description: Microsoft Excel document
+          default_app: {{ .Values.office.name }}
+          allow_creation: true
+        - mime_type: application/vnd.openxmlformats-officedocument.presentationml.presentation
+          extension: pptx
+          name: Microsoft PowerPoint
+          description: Microsoft PowerPoint document
+          default_app: {{ .Values.office.name }}
+          allow_creation: true
+        - mime_type: application/vnd.jupyter
+          extension: ipynb
+          name: Jupyter Notebook
+          description: Jupyter Notebook
+        - mime_type: text/markdown
+          extension: md
+          name: Markdown file
+          description: Markdown file
+          allow_creation: true
+        - mime_type: application/compressed-markdown
+          extension: zmd
+          name: Compressed markdown file
+          description: Compressed markdown file
+        - mime_type: application/vnd.geogebra.slides
+          extension: ggs
+          name: GeoGebra Slides
+          description: GeoGebra Slides

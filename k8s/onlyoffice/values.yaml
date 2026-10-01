@@ -1,0 +1,43 @@
+image:
+  repository: onlyoffice/documentserver
+  pullPolicy: IfNotPresent
+  tag: ""
+
+fullnameOverride: "onlyoffice"
+
+extraEnv:
+  WOPI_ENABLED: "true"
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 3Gi
+
+startupProbe:
+  httpGet:
+    path: /healthcheck
+    port: http
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+livenessProbe:
+  httpGet:
+    path: /healthcheck
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+readinessProbe:
+  httpGet:
+    path: /healthcheck
+    port: http
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3

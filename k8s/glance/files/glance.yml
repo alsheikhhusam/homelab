@@ -116,7 +116,7 @@ pages:
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png
               - title: BookOrbit
                 url: https://orbit.husamalsheikh.com
-                check-url: http://bookorbit.bookorbit.svc.cluster.local:3000/api/v1/health
+                check-url: http://bookorbit.orbit.svc.cluster.local:3000/api/v1/health
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bookorbit.png
               - title: Grafana
                 url: https://grafana.husamalsheikh.com

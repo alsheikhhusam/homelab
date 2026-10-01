@@ -18,6 +18,10 @@ extraEnv:
   IDM_CREATE_DEMO_USERS: "false"
   OC_SPACES_MAX_QUOTA: "24696061952"
 
+office:
+  name: OnlyOffice
+  url: https://office.husamalsheikh.com
+
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
