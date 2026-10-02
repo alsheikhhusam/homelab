@@ -22,17 +22,14 @@ data:
           extension: odt
           name: Document
           description: OpenDocument text document
-          allow_creation: true
         - mime_type: application/vnd.oasis.opendocument.spreadsheet
           extension: ods
           name: Spreadsheet
           description: OpenDocument spreadsheet document
-          allow_creation: true
         - mime_type: application/vnd.oasis.opendocument.presentation
           extension: odp
           name: Presentation
           description: OpenDocument presentation document
-          allow_creation: true
         - mime_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
           extension: docx
           name: Microsoft Word

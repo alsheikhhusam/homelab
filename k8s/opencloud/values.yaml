@@ -21,6 +21,8 @@ extraEnv:
 office:
   name: OnlyOffice
   url: https://office.husamalsheikh.com
+  internalUrl: http://onlyoffice.office.svc.cluster.local
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/onlyoffice.svg
 
 podSecurityContext:
   runAsUser: 1000

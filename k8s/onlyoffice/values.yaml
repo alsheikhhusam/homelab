@@ -5,6 +5,8 @@ image:
 
 fullnameOverride: "onlyoffice"
 
+url: https://office.husamalsheikh.com
+
 extraEnv:
   WOPI_ENABLED: "true"
 

@@ -13,6 +13,8 @@ spec:
       {{- include "onlyoffice.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "onlyoffice.labels" . | nindent 8 }}
     spec:
@@ -45,3 +47,11 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/onlyoffice/documentserver/local-production-linux.json
+              subPath: local-production-linux.json
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "onlyoffice.fullname" . }}-config
