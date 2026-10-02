@@ -44,9 +44,9 @@ spec:
             - name: COLLABORATION_APP_PRODUCT
               value: OnlyOffice
             - name: COLLABORATION_APP_ADDR
-              value: {{ .Values.office.url | quote }}
+              value: {{ .Values.office.internalUrl | quote }}
             - name: COLLABORATION_APP_ICON
-              value: "{{ .Values.office.url }}/web-apps/apps/documenteditor/main/resources/img/favicon.ico"
+              value: {{ .Values.office.icon | quote }}
             - name: COLLABORATION_APP_PROOF_DISABLE
               value: "true"
             - name: PROXY_CSP_CONFIG_FILE_LOCATION
