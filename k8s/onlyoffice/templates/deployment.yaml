@@ -27,6 +27,18 @@ spec:
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    for f in /var/www/onlyoffice/documentserver/web-apps/apps/*/main/resources/css/app.css; do
+                      [ -f "$f" ] || continue
+                      grep -q '#header-logo{display:none' "$f" || echo '#header-logo{display:none!important}' >> "$f"
+                      gzip -9 -kf "$f"
+                    done
           ports:
             - name: http
               containerPort: 80
