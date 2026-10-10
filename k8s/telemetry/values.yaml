@@ -62,6 +62,11 @@ kube-prometheus-stack:
                 description: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago.
 
   grafana:
+    sidecar:
+      dashboards:
+        folderAnnotation: grafana_folder
+        provider:
+          foldersFromFilesStructure: true
     # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).
     fullnameOverride: grafana
     # Admin credentials come from a Secret you create out-of-band (not in git):
