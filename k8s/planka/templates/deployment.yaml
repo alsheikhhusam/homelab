@@ -105,7 +105,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-          {{- if not .Values.postgresql.enabled }}
+          {{- if not (.Values.postgresql).enabled }}
           {{- if .Values.existingDburlSecret }}
             - name: DATABASE_URL
               valueFrom:

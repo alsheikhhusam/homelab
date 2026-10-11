@@ -68,7 +68,7 @@ persistence:
     postgres: 5Gi
 
 postgres:
-  image: pgvector/pgvector:pg18
+  image: pgvector/pgvector:0.8.7-pg18
   user: bookorbit
   database: bookorbit
   resources:

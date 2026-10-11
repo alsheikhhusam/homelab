@@ -20,12 +20,12 @@ couchdb:
 
   image:
     repository: couchdb
-    tag: 3.5.1
+    tag: 3.5.2.1
     pullPolicy: IfNotPresent
 
   initImage:
     repository: busybox
-    tag: "1.37.0"
+    tag: "1.38.0"
     pullPolicy: IfNotPresent
 
   resources:

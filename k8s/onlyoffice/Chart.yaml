@@ -3,4 +3,4 @@ name: onlyoffice
 description: ONLYOFFICE Docs all-in-one document server, used by OpenCloud as its WOPI web office
 type: application
 version: 0.1.0
-appVersion: "9.3.0.1"
+appVersion: "9.4.0.1"
