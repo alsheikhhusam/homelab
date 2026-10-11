@@ -15,12 +15,17 @@ alertmanagerConfig:
 pvcUsageExporter:
   enabled: true
   schedule: "*/15 * * * *"
-  image: alpine:3.20
+  image: alpine:3.24
 
 # -----------------------------------------------------------------------------
 # kube-prometheus-stack: Grafana + Prometheus + node-exporter + kube-state-metrics
 # -----------------------------------------------------------------------------
 kube-prometheus-stack:
+  crds:
+    upgradeJob:
+      enabled: true
+      forceConflicts: true
+
   alertmanager:
     enabled: true
     alertmanagerSpec:
@@ -243,7 +248,7 @@ loki:
   # keep resolving to loki.telemetry.svc.cluster.local:3100.
   fullnameOverride: loki
 
-  deploymentMode: SingleBinary
+  deploymentMode: Monolithic
 
   loki:
     startupProbe:
@@ -294,7 +299,6 @@ loki:
   distributor: { replicas: 0 }
   compactor: { replicas: 0 }
   indexGateway: { replicas: 0 }
-  bloomCompactor: { replicas: 0 }
   bloomGateway: { replicas: 0 }
 
   # Drop the heavy extras the chart would otherwise add.
@@ -310,11 +314,6 @@ loki:
     enabled: false
   test:
     enabled: false
-  monitoring:
-    selfMonitoring:
-      enabled: false
-      grafanaAgent:
-        installOperator: false
 
 # -----------------------------------------------------------------------------
 # Alloy: log collection only (DaemonSet) -> ships pod and kernel logs to Loki.
