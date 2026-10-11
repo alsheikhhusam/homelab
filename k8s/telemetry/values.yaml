@@ -317,13 +317,16 @@ loki:
         installOperator: false
 
 # -----------------------------------------------------------------------------
-# Alloy: log collection only (DaemonSet) -> ships pod logs to Loki.
+# Alloy: log collection only (DaemonSet) -> ships pod and kernel logs to Loki.
 # -----------------------------------------------------------------------------
 alloy:
   controller:
     type: daemonset
 
   alloy:
+    mounts:
+      varlog: true
+
     configMap:
       create: true
       content: |-
@@ -401,6 +404,28 @@ alloy:
             expression = ".*unable to upgrade connection: container not found.*"
             drop_counter_reason = "container_not_found"
           }
+        }
+
+        loki.relabel "journal" {
+          forward_to = []
+
+          rule {
+            source_labels = ["__journal__hostname"]
+            target_label  = "node"
+          }
+
+          rule {
+            source_labels = ["__journal_priority_keyword"]
+            target_label  = "level"
+          }
+        }
+
+        loki.source.journal "kernel" {
+          path          = "/var/log/journal"
+          matches       = "_TRANSPORT=kernel"
+          labels        = { job = "kernel" }
+          relabel_rules = loki.relabel.journal.rules
+          forward_to    = [loki.write.default.receiver]
         }
 
         loki.write "default" {
