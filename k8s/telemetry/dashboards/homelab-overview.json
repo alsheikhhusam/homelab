@@ -485,7 +485,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "increase(node_network_carrier_changes_total{device=\"wlp2s0\"}[24h])",
+          "expr": "sum(increase(node_network_carrier_changes_total{device=\"wlp2s0\"}[24h])) or vector(0)",
           "instant": true
         }
       ]
@@ -846,22 +846,22 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "topk(10, 100 * container_memory_working_set_bytes{container!=\"\"} / on(namespace,pod,container) kube_pod_container_resource_limits{resource=\"memory\"})",
+          "expr": "topk(10, 100 * max by (namespace,pod,container) (container_memory_working_set_bytes{container!=\"\"}) / max by (namespace,pod,container) (kube_pod_container_resource_limits{resource=\"memory\"}))",
           "legendFormat": "{{namespace}}/{{container}}"
         }
       ]
     },
     {
       "id": 13,
-      "type": "bargauge",
+      "type": "state-timeline",
       "title": "Workload availability",
-      "description": "Full green bar = all replicas available.",
+      "description": "Green = all replicas ready; red = some or all replicas missing. Deployments and StatefulSets.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
-        "h": 10,
+        "h": 14,
         "w": 24,
         "x": 0,
         "y": 20
@@ -871,13 +871,20 @@
           "unit": "percentunit",
           "min": 0,
           "max": 1,
-          "decimals": 1,
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "red",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.01
               },
               {
                 "color": "green",
@@ -888,24 +895,54 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": []
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "text": "Up",
+                  "color": "green",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Down",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            },
+            {
+              "type": "range",
+              "options": {
+                "from": 0.01,
+                "to": 0.99,
+                "result": {
+                  "text": "Degraded",
+                  "color": "orange",
+                  "index": 2
+                }
+              }
+            }
+          ]
         },
         "overrides": []
       },
       "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "showUnfilled": true,
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "valueMode": "color",
-        "namePlacement": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "showValue": "never",
+        "rowHeight": 0.8,
+        "mergeValues": true,
+        "alignValue": "left",
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -915,9 +952,8 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "kube_deployment_status_replicas_available / clamp_min(kube_deployment_spec_replicas, 1)",
-          "legendFormat": "{{namespace}}/{{deployment}}",
-          "instant": true
+          "expr": "max by (namespace, workload) (label_replace(kube_deployment_status_replicas_available / clamp_min(kube_deployment_spec_replicas, 1), \"workload\", \"$1\", \"deployment\", \"(.+)\")) or max by (namespace, workload) (label_replace(kube_statefulset_status_replicas_ready / clamp_min(kube_statefulset_replicas, 1), \"workload\", \"$1\", \"statefulset\", \"(.+)\"))",
+          "legendFormat": "{{namespace}}/{{workload}}"
         }
       ]
     },
@@ -934,7 +970,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 34
       },
       "fieldConfig": {
         "defaults": {
