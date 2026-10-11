@@ -774,7 +774,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "topk(8, 100 * rate(container_cpu_cfs_throttled_periods_total{container!=\"\"}[5m]) / clamp_min(rate(container_cpu_cfs_periods_total{container!=\"\"}[5m]), 0.001))",
+          "expr": "topk(8, max by (namespace, container) (100 * rate(container_cpu_cfs_throttled_periods_total{container!=\"\"}[5m]) / clamp_min(rate(container_cpu_cfs_periods_total{container!=\"\"}[5m]), 0.001)))",
           "legendFormat": "{{namespace}}/{{container}}"
         }
       ]
@@ -1026,6 +1026,180 @@
           "expr": "sum by (namespace) (count_over_time({cluster=\"homelab\"} |~ \"(?i)(error|fatal|panic)\" [$__auto]))",
           "queryType": "range",
           "legendFormat": "{{namespace}}"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "table",
+      "title": "Resource requests & limits",
+      "description": "Per workload (Deployments + StatefulSets), summed over its pods' containers. \u2014 means not set.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "\u2014",
+          "decimals": 0,
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU request"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU limit"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:m"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory request"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory limit"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Workload",
+            "desc": false
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "label_join(max by (namespace, workload) (max by (namespace,pod,workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.*)\") * on(namespace,replicaset) group_left(workload) max by (namespace,replicaset,workload) (label_replace(kube_replicaset_owner{owner_kind=\"Deployment\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\")) or label_replace(kube_pod_owner{owner_kind=\"StatefulSet\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\"))), \"name\", \"/\", \"namespace\", \"workload\")",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "label_join(1000 * sum by (namespace, workload) (max by (namespace,pod,container) (kube_pod_container_resource_requests{resource=\"cpu\"}) * on(namespace,pod) group_left(workload) max by (namespace,pod,workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.*)\") * on(namespace,replicaset) group_left(workload) max by (namespace,replicaset,workload) (label_replace(kube_replicaset_owner{owner_kind=\"Deployment\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\")) or label_replace(kube_pod_owner{owner_kind=\"StatefulSet\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\"))), \"name\", \"/\", \"namespace\", \"workload\")",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "label_join(1000 * sum by (namespace, workload) (max by (namespace,pod,container) (kube_pod_container_resource_limits{resource=\"cpu\"}) * on(namespace,pod) group_left(workload) max by (namespace,pod,workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.*)\") * on(namespace,replicaset) group_left(workload) max by (namespace,replicaset,workload) (label_replace(kube_replicaset_owner{owner_kind=\"Deployment\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\")) or label_replace(kube_pod_owner{owner_kind=\"StatefulSet\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\"))), \"name\", \"/\", \"namespace\", \"workload\")",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "label_join(sum by (namespace, workload) (max by (namespace,pod,container) (kube_pod_container_resource_requests{resource=\"memory\"}) * on(namespace,pod) group_left(workload) max by (namespace,pod,workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.*)\") * on(namespace,replicaset) group_left(workload) max by (namespace,replicaset,workload) (label_replace(kube_replicaset_owner{owner_kind=\"Deployment\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\")) or label_replace(kube_pod_owner{owner_kind=\"StatefulSet\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\"))), \"name\", \"/\", \"namespace\", \"workload\")",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "label_join(sum by (namespace, workload) (max by (namespace,pod,container) (kube_pod_container_resource_limits{resource=\"memory\"}) * on(namespace,pod) group_left(workload) max by (namespace,pod,workload) (label_replace(kube_pod_owner{owner_kind=\"ReplicaSet\"}, \"replicaset\", \"$1\", \"owner_name\", \"(.*)\") * on(namespace,replicaset) group_left(workload) max by (namespace,replicaset,workload) (label_replace(kube_replicaset_owner{owner_kind=\"Deployment\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\")) or label_replace(kube_pod_owner{owner_kind=\"StatefulSet\"}, \"workload\", \"$1\", \"owner_name\", \"(.*)\"))), \"name\", \"/\", \"namespace\", \"workload\")",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "namespace": true,
+              "workload": true,
+              "Value #A": true
+            },
+            "indexByName": {
+              "name": 0,
+              "Value #B": 1,
+              "Value #C": 2,
+              "Value #D": 3,
+              "Value #E": 4
+            },
+            "renameByName": {
+              "name": "Workload",
+              "Value #B": "CPU request",
+              "Value #C": "CPU limit",
+              "Value #D": "Memory request",
+              "Value #E": "Memory limit"
+            }
+          }
         }
       ]
     }
