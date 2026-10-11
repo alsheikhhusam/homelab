@@ -65,6 +65,42 @@ kube-prometheus-stack:
               annotations:
                 summary: CronJob has not succeeded in over 3 hours.
                 description: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago.
+    storage:
+      groups:
+        - name: storage
+          rules:
+            - alert: DiskImageAlmostFull
+              expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/mnt/k8s/.+"} / node_filesystem_size_bytes{mountpoint=~"/mnt/k8s/.+"}) > 85
+              for: 10m
+              labels:
+                severity: warning
+              annotations:
+                summary: A reserved disk image is over 85% full.
+                description: "{{ $labels.mountpoint }} is {{ $value | printf \"%.1f\" }}% full. It is a hard cap: writes fail at 100%."
+            - alert: DiskImageFull
+              expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/mnt/k8s/.+"} / node_filesystem_size_bytes{mountpoint=~"/mnt/k8s/.+"}) > 95
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: A reserved disk image is over 95% full.
+                description: "{{ $labels.mountpoint }} is {{ $value | printf \"%.1f\" }}% full. Writes fail at 100%."
+            - alert: DiskImageNotMounted
+              expr: absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/opencloud"}) or absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/bookorbit"}) or absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/wallos"})
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: A disk image is not mounted.
+                description: "{{ $labels.mountpoint }} is not mounted (check /etc/fstab and the loop device). Its app cannot start."
+            - alert: PVCUsageExporterStale
+              expr: (time() - max(node_textfile_mtime_seconds{file=~".*/pvc_usage.prom"}) > 2700) or absent(node_textfile_mtime_seconds{file=~".*/pvc_usage.prom"}) or max(node_textfile_scrape_error) > 0
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: PVC usage data is stale or missing.
+                description: The pvc-usage-exporter has not written pvc_usage.prom in over 45 minutes (or node-exporter cannot read it), so PVC usage alerts are blind.
 
   grafana:
     sidecar:
@@ -150,7 +186,7 @@ kube-prometheus-stack:
                 title: PVC over 90% of assigned size
                 condition: C
                 for: 10m
-                noDataState: OK
+                noDataState: Alerting
                 execErrState: OK
                 labels:
                   severity: warning
@@ -183,7 +219,7 @@ kube-prometheus-stack:
                 title: PVC over its assigned size
                 condition: C
                 for: 5m
-                noDataState: OK
+                noDataState: Alerting
                 execErrState: OK
                 labels:
                   severity: critical
