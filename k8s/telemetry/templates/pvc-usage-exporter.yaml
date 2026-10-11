@@ -10,7 +10,7 @@ data:
   limits.txt: |
     # namespace/claim                         assigned-size  (matched by prefix)
     n8n/n8n-main-persistence                   5Gi
-    planka/data-planka-postgresql-0            1Gi
+    planka/planka-postgres                     1Gi
     telemetry/storage-loki-0                   3Gi
     telemetry/grafana                          1Gi
     commafeed/commafeed-pvc                    1Gi
