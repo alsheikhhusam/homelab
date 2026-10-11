@@ -14,6 +14,7 @@ data:
     telemetry/storage-loki-0                   3Gi
     telemetry/grafana                          1Gi
     commafeed/commafeed-pvc                    1Gi
+    obsidian/database-storage-obsidian-couchdb-0 1Gi
     # prometheus claim name is very long; prefix-matched
     telemetry/prometheus                       5Gi
   collect.sh: |
