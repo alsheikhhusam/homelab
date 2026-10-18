@@ -9,7 +9,7 @@ document:
     <script src="/assets/prayer-widget.js?v=__ASSETS_VERSION__" defer></script>
     <script src="/assets/tab-reorder.js?v=__ASSETS_VERSION__" defer></script>
     <script src="/assets/ayah-banner.js?v=__ASSETS_VERSION__" defer></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@700&display=swap">
 
 pages:
   - name: Home
