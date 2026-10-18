@@ -2,13 +2,14 @@
 // calendar day (browser local time) by stepping through all 6236 ayahs with a
 // stride coprime to 6236, so none repeats until every one has been shown.
 // Closing it hides it until the next day; at midnight a new one appears even if
-// the page stays open. Text from api.alquran.cloud (Uthmani + Sahih Intl).
+// the page stays open. Uthmani text from api.alquran.cloud.
 (function () {
   "use strict";
   var KEY = "ayah-dismissed";
   var TOTAL = 6236;
   var STRIDE = 2617;
   var API = "https://api.alquran.cloud/v1/ayah/";
+  var arDigits = new Intl.NumberFormat("ar-u-nu-arab");
   var closeSvg = '<svg stroke="currentColor" fill="none" viewBox="0 0 24 24" stroke-width="1.5" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>';
   var day = null;
 
@@ -39,7 +40,7 @@
     if (b) b.remove();
   }
 
-  function render(key, ar, en) {
+  function render(key, ar) {
     var columns = document.querySelector("#page-content .page-columns");
     if (!columns || day !== key) return;
     removeBanner();
@@ -57,18 +58,19 @@
     header.appendChild(close);
 
     var content = el("div", "widget-content");
+    content.style.textAlign = "center";
     var arabic = el("p", "color-highlight", ar.text.replace(/ ([\u06D6-\u06DC])/g, "$1"));
     arabic.dir = "rtl";
     arabic.lang = "ar";
     arabic.style.cssText = "font-family:'Amiri Quran',serif;font-size:3.4rem;line-height:2.1";
-    var english = el("p", "color-base size-h4", en.text);
-    english.style.marginTop = "1rem";
-    var ref = el("a", "size-h6 color-subdue", ar.surah.englishName + " " + ar.surah.number + ":" + ar.numberInSurah);
+    var ref = el("a", "color-base", ar.surah.name + "، الآية " + arDigits.format(ar.numberInSurah));
+    ref.dir = "rtl";
+    ref.lang = "ar";
     ref.href = "https://quran.com/" + ar.surah.number + "/" + ar.numberInSurah;
     ref.target = "_blank";
     ref.rel = "noreferrer";
-    ref.style.cssText = "display:inline-block;margin-top:0.8rem";
-    content.append(arabic, english, ref);
+    ref.style.cssText = "display:inline-block;margin-top:0.8rem;font-family:Amiri,serif;font-size:2rem;font-weight:700";
+    content.append(arabic, ref);
 
     banner.append(header, content);
     columns.parentNode.insertBefore(banner, columns);
@@ -80,9 +82,9 @@
     removeBanner();
     day = key;
     if (dismissed(key)) return;
-    fetch(API + ayahNumber(key) + "/editions/quran-uthmani,en.sahih")
+    fetch(API + ayahNumber(key) + "/quran-uthmani")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (j) { render(key, j.data[0], j.data[1]); })
+      .then(function (j) { render(key, j.data); })
       .catch(function () { if (day === key) day = null; });
   }
 
