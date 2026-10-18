@@ -3,7 +3,7 @@ name: n8n
 description: Thin wrapper that pulls the upstream community-charts/n8n chart as a dependency.
 type: application
 version: 0.1.0
-appVersion: "2.42.6"
+appVersion: "2.43.7"
 
 dependencies:
   - name: n8n

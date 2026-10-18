@@ -3,7 +3,7 @@ name: obsidian
 description: Thin wrapper that pulls the upstream apache/couchdb chart as the Obsidian Self-hosted LiveSync backend.
 type: application
 version: 0.1.0
-appVersion: "3.5.2.1"
+appVersion: "3.5.3"
 
 dependencies:
   - name: couchdb

@@ -6,4 +6,9 @@ metadata:
     {{- include "onlyoffice.labels" . | nindent 4 }}
 data:
   local-production-linux.json: |
-    {{- dict "wopi" (dict "host" .Values.url) | toPrettyJson | nindent 4 }}
+    {{- $rules := list }}
+    {{- range .Values.wopiAllowedHosts }}
+    {{- $rules = append $rules (dict "address" . "allowed" true) }}
+    {{- end }}
+    {{- $rules = append $rules (dict "address" "*" "allowed" false) }}
+    {{- dict "wopi" (dict "host" .Values.url) "services" (dict "CoAuthoring" (dict "ipfilter" (dict "rules" $rules))) | toPrettyJson | nindent 4 }}
