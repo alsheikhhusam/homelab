@@ -7,6 +7,9 @@ fullnameOverride: "onlyoffice"
 
 url: https://office.husamalsheikh.com
 
+wopiAllowedHosts:
+  - opencloud.husamalsheikh.com
+
 extraEnv:
   WOPI_ENABLED: "true"
 
