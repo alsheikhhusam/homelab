@@ -216,6 +216,11 @@ pages:
             servers:
               - type: local
                 name: Homelab
+                hide-mountpoints-by-default: true
+                mountpoints:
+                  "/":
+                    name: Disk
+                    hide: false
           - type: to-do
           - type: custom-api
             title: Alerts
