@@ -45,46 +45,34 @@ pages:
               <div data-prayer-widget></div>
           - type: bookmarks
             groups:
-              - title: Apps
-                links:
-                  - title: OpenCloud
-                    url: https://opencloud.husamalsheikh.com
-                  - title: Planka
-                    url: https://planka.husamalsheikh.com
-                  - title: n8n
-                    url: https://n8n.husamalsheikh.com
-                  - title: CommaFeed
-                    url: https://feed.husamalsheikh.com
-                  - title: Wallos
-                    url: https://wallos.husamalsheikh.com
-                  - title: Omni Tools
-                    url: https://omni.husamalsheikh.com
-                  - title: BookOrbit
-                    url: https://orbit.husamalsheikh.com
               - title: Infrastructure
                 links:
                   - title: Cloudflare
                     url: https://dash.cloudflare.com
-                  - title: Grafana
-                    url: https://grafana.husamalsheikh.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cloudflare.svg
                   - title: Resend
                     url: https://resend.com
+                    icon: si:resend
               - title: Personal
                 links:
                   - title: GitHub
                     url: https://github.com/alsheikhhusam
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/github-light.svg
                   - title: LinkedIn
                     url: https://www.linkedin.com/in/husam-alsheikh/
-                  - title: Portfolio
-                    url: https://husamalsheikh.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/linkedin.svg
                   - title: Gmail
                     url: https://gmail.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/gmail.svg
                   - title: ProtonMail
                     url: https://mail.proton.me/u/0/inbox
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/proton-mail.svg
                   - title: YouTube
                     url: https://youtube.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/youtube.svg
                   - title: Claude
                     url: https://claude.ai
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/claude-ai.svg
           - type: monitor
             title: Services
             cache: 1m
