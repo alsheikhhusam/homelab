@@ -53,7 +53,10 @@
       ".pw-now .pw-time{color:var(--color-primary);font-weight:700;}" +
       ".pw-next .pw-name{color:var(--color-primary);opacity:.6;}" +
       ".pw-next .pw-time{color:var(--color-primary);opacity:.6;}" +
-      ".pw-hide{display:none;}";
+      ".pw-count{display:flex;align-items:baseline;gap:0.8rem;white-space:nowrap;margin:0 1.5rem;}" +
+      ".pw-count-time{color:var(--color-primary);font-variant-numeric:tabular-nums;}" +
+      ".pw-hide{display:none;}" +
+      "@media (max-width:550px){.pw-date{display:none;}.pw-count{margin-right:0;}}";
     document.head.appendChild(s);
   }
 
@@ -69,8 +72,12 @@
     input.setAttribute("aria-label", "City");
     var list = el("ul", "pw-list pw-hide");
     box.appendChild(input); box.appendChild(list);
-    var dateEl = el("div", "color-subdue size-h6");
-    header.appendChild(box); header.appendChild(dateEl);
+    var dateEl = el("div", "pw-date color-subdue size-h6");
+    var count = el("div", "pw-count pw-hide");
+    var countLabel = el("span", "color-subdue size-h6 uppercase");
+    var countTime = el("span", "pw-count-time size-h2");
+    count.appendChild(countLabel); count.appendChild(countTime);
+    header.appendChild(box); header.appendChild(count); header.appendChild(dateEl);
 
     var grid = el("div", "flex justify-between text-center margin-top-10");
     var timeEls = {}, cols = {};
@@ -120,6 +127,18 @@
         cols[p[1]].classList.toggle("pw-now", i === cur);
         cols[p[1]].classList.toggle("pw-next", i === nxt);
       });
+      countdown(n);
+    }
+
+    function countdown(n) {
+      var next = null, wait = 0;
+      PRAYERS.forEach(function (p) {
+        if (!next && p[1] !== "Sunrise" && n.minutes < state.mins[p[1]]) { next = p; wait = state.mins[p[1]] - n.minutes; }
+      });
+      if (!next) { next = PRAYERS[0]; wait = state.mins.Fajr + 1440 - n.minutes; }
+      countLabel.textContent = next[0] + " in";
+      countTime.textContent = Math.floor(wait / 60) + ":" + pad(wait % 60);
+      count.classList.remove("pw-hide");
     }
 
     var current = DEFAULT;
@@ -196,7 +215,7 @@
     input.addEventListener("focus", function () { input.select(); });
 
     fetchTimes(current);
-    setInterval(highlight, 30000);
+    setInterval(highlight, 15000);
   }
 
   function init(node) {
