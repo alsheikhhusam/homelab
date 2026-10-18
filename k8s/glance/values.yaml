@@ -111,6 +111,11 @@ httpRoute:
   #     - name: version
   #       value: v2
 
+envFrom:
+  - secretRef:
+      name: glance-grafana-token
+      optional: true
+
 resources:
   requests:
     cpu: 10m
