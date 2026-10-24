@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "opencloud.fullname" . }}-data
+  labels:
+    {{- include "opencloud.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size | quote }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  volumeMode: Filesystem
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "opencloud.fullname" . }}-data
+  hostPath:
+    path: {{ .Values.persistence.hostPath }}
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "opencloud.fullname" . }}-data
+  labels:
+    {{- include "opencloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+  storageClassName: ""
+  volumeName: {{ include "opencloud.fullname" . }}-data

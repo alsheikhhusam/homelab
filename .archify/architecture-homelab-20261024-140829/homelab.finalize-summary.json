@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "skipped",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/candidate.json",
+    "sha256": "d6b0a880063b794588e992221eec3b0cf129c929e0cac5855451d2ee5cdfa804",
+    "bytes": 4187
+  },
+  "artifact": {
+    "path": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+    "sha256": "a2db370872535bd314a88cf9f93396ef7748db8c6124c94ba9c40e401954587b",
+    "bytes": 833995
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "skipped"
+  },
+  "failedStage": "browser-check",
+  "diagnostics": [
+    {
+      "code": "viewer/chrome-unavailable",
+      "severity": "warning",
+      "message": "No supported browser found. Install Chrome/Chromium (or Microsoft Edge), or set ARCHIFY_CHROME to its executable path.",
+      "subject": {
+        "artifact": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html"
+      },
+      "evidence": {
+        "executable": null
+      },
+      "supportedFixes": [
+        "set ARCHIFY_CHROME to a Chrome/Chromium executable (or Microsoft Edge) and rerun browser-check"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.finalize.json",
+    "summaryReceipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.finalize-summary.json",
+    "browserCheckReceipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-24T14:08:47.688Z",
+    "source": "network",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1096,
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  }
+}

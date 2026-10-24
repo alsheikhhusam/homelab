@@ -1,0 +1,275 @@
+server:
+  host: 0.0.0.0
+  port: 8080
+  assets-path: /app/assets
+
+document:
+  head: |
+    <script src="/assets/hijri-calendar.js?v=__ASSETS_VERSION__" defer></script>
+    <script src="/assets/prayer-widget.js?v=__ASSETS_VERSION__" defer></script>
+    <script src="/assets/tab-reorder.js?v=__ASSETS_VERSION__" defer></script>
+    <script src="/assets/ayah-banner.js?v=__ASSETS_VERSION__" defer></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@700&display=swap">
+
+pages:
+  - name: Home
+    columns:
+      - size: small
+        widgets:
+          - type: clock
+            hour-format: 12h
+            timezones:
+              - timezone: Asia/Riyadh
+                label: Riyadh
+          - type: weather
+            location: Farmington Hills, Michigan, United States
+            units: metric
+            hour-format: 12h
+          - type: group
+            widgets:
+              - type: calendar
+                title: Gregorian
+                first-day-of-week: monday
+              - type: custom-api
+                title: Hijri
+                template: |
+                  <div class="widget-small-content-bounds">
+                    <div data-hijri-calendar></div>
+                  </div>
+
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Prayer Times
+            template: |
+              <div data-prayer-widget></div>
+          - type: bookmarks
+            groups:
+              - title: Infrastructure
+                links:
+                  - title: Cloudflare
+                    url: https://dash.cloudflare.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cloudflare.svg
+                  - title: Resend
+                    url: https://resend.com
+                    icon: si:resend
+              - title: Personal
+                links:
+                  - title: GitHub
+                    url: https://github.com/alsheikhhusam
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/github-light.svg
+                  - title: LinkedIn
+                    url: https://www.linkedin.com/in/husam-alsheikh/
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/linkedin.svg
+                  - title: Gmail
+                    url: https://gmail.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/gmail.svg
+                  - title: ProtonMail
+                    url: https://mail.proton.me/u/0/inbox
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/proton-mail.svg
+                  - title: YouTube
+                    url: https://youtube.com
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/youtube.svg
+                  - title: Claude
+                    url: https://claude.ai
+                    icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/claude-ai.svg
+          - type: monitor
+            title: Services
+            cache: 1m
+            sites:
+              - title: Portfolio
+                url: https://husamalsheikh.com
+                check-url: http://portfolio.portfolio.svc.cluster.local:80
+                icon: https://cdn.jsdelivr.net/npm/lucide-static/icons/briefcase.svg
+              - title: OpenCloud
+                url: https://opencloud.husamalsheikh.com
+                check-url: http://opencloud.opencloud.svc.cluster.local:9200
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/open-cloud.png
+              - title: Planka
+                url: https://planka.husamalsheikh.com
+                check-url: http://planka.planka.svc.cluster.local:1337
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/planka.png
+              - title: n8n
+                url: https://n8n.husamalsheikh.com
+                check-url: http://n8n.n8n.svc.cluster.local:5678
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/n8n.png
+              - title: CommaFeed
+                url: https://feed.husamalsheikh.com
+                check-url: http://commafeed.commafeed.svc.cluster.local:80
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/commafeed.png
+              - title: Wallos
+                url: https://wallos.husamalsheikh.com
+                check-url: http://wallos.wallos.svc.cluster.local:80
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallos.png
+              - title: Omni Tools
+                url: https://omni.husamalsheikh.com
+                check-url: http://omni-tools.omni.svc.cluster.local:80
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/omni-tools.png
+              - title: BookOrbit
+                url: https://orbit.husamalsheikh.com
+                check-url: http://bookorbit.orbit.svc.cluster.local:3000/api/v1/health
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bookorbit.png
+              - title: Grafana
+                url: https://grafana.husamalsheikh.com
+                check-url: http://grafana.telemetry.svc.cluster.local:80
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png
+          - type: group
+            widgets:
+              - type: rss
+                title: r/Azure
+                title-url: https://www.reddit.com/r/Azure/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/Azure.xml
+                    hide-description: true
+              - type: rss
+                title: r/Cloud
+                title-url: https://www.reddit.com/r/Cloud/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/Cloud.xml
+                    hide-description: true
+              - type: rss
+                title: r/devops
+                title-url: https://www.reddit.com/r/devops/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/devops.xml
+                    hide-description: true
+              - type: rss
+                title: r/sysadmin
+                title-url: https://www.reddit.com/r/sysadmin/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/sysadmin.xml
+                    hide-description: true
+              - type: rss
+                title: r/homelab
+                title-url: https://www.reddit.com/r/homelab/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/homelab.xml
+                    hide-description: true
+              - type: rss
+                title: r/selfhosted
+                title-url: https://www.reddit.com/r/selfhosted/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/selfhosted.xml
+                    hide-description: true
+              - type: rss
+                title: r/kubernetes
+                title-url: https://www.reddit.com/r/kubernetes/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/kubernetes.xml
+                    hide-description: true
+              - type: rss
+                title: r/technology
+                title-url: https://www.reddit.com/r/technology/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/technology.xml
+                    hide-description: true
+              - type: rss
+                title: r/guns
+                title-url: https://www.reddit.com/r/guns/
+                cache: 15m
+                limit: 15
+                collapse-after: 5
+                feeds:
+                  - url: http://localhost:8080/assets/feeds/guns.xml
+                    hide-description: true
+              - type: hacker-news
+
+      - size: small
+        widgets:
+          - type: server-stats
+            servers:
+              - type: local
+                name: Homelab
+                hide-mountpoints-by-default: true
+                mountpoints:
+                  "/":
+                    name: Disk
+                    hide: false
+          - type: to-do
+          - type: custom-api
+            title: Alerts
+            title-url: https://grafana.husamalsheikh.com/alerting/list
+            cache: 1m
+            url: http://telemetry-kube-prometheus-prometheus.telemetry.svc.cluster.local:9090/api/v1/rules?type=alert
+            subrequests:
+              grafana:
+                url: http://grafana.telemetry.svc.cluster.local/api/prometheus/grafana/api/v1/rules
+                headers:
+                  Authorization: Bearer ${GRAFANA_TOKEN}
+            template: |
+              {{ $prometheus := . }}
+              {{ $grafana := .Subrequest "grafana" }}
+              <ul class="list list-gap-8">
+                {{ $source := $prometheus }}
+                {{ range $source.JSON.Array "data.groups" }}
+                  {{ $firing := .Array `rules.#(state=="firing")#|#(labels.severity!="info")#` }}
+                  {{ if gt (len $firing) 0 }}
+                    <li>
+                      <div class="flex justify-between items-center gap-10">
+                        <span class="color-highlight text-truncate">{{ .String "name" }}</span>
+                        <span class="color-negative shrink-0">{{ len $firing }} firing</span>
+                      </div>
+                      <ul class="list-horizontal-text size-h6">
+                        {{ range $firing }}<li class="{{ if eq (.String "labels.severity") "critical" }}color-negative{{ else }}color-primary{{ end }}">{{ .String "name" }}</li>{{ end }}
+                      </ul>
+                    </li>
+                  {{ end }}
+                {{ end }}
+                {{ $source = $grafana }}
+                {{ range $source.JSON.Array "data.groups" }}
+                  {{ $firing := .Array `rules.#(state=="firing")#|#(labels.severity!="info")#` }}
+                  {{ if gt (len $firing) 0 }}
+                    <li>
+                      <div class="flex justify-between items-center gap-10">
+                        <span class="color-highlight text-truncate">{{ .String "name" }}</span>
+                        <span class="color-negative shrink-0">{{ len $firing }} firing</span>
+                      </div>
+                      <ul class="list-horizontal-text size-h6">
+                        {{ range $firing }}<li class="{{ if eq (.String "labels.severity") "critical" }}color-negative{{ else }}color-primary{{ end }}">{{ .String "name" }}</li>{{ end }}
+                      </ul>
+                    </li>
+                  {{ end }}
+                {{ end }}
+                {{ $source = $prometheus }}
+                {{ range $source.JSON.Array "data.groups" }}
+                  {{ if eq (len (.Array `rules.#(state=="firing")#|#(labels.severity!="info")#`)) 0 }}
+                    <li class="flex justify-between items-center gap-10">
+                      <span class="text-truncate">{{ .String "name" }}</span>
+                      <span class="color-positive shrink-0">All clear</span>
+                    </li>
+                  {{ end }}
+                {{ end }}
+                {{ $source = $grafana }}
+                {{ range $source.JSON.Array "data.groups" }}
+                  {{ if eq (len (.Array `rules.#(state=="firing")#|#(labels.severity!="info")#`)) 0 }}
+                    <li class="flex justify-between items-center gap-10">
+                      <span class="text-truncate">{{ .String "name" }}</span>
+                      <span class="color-positive shrink-0">All clear</span>
+                    </li>
+                  {{ end }}
+                {{ end }}
+              </ul>
