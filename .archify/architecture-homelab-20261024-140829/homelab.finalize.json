@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "skipped",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-10-24T14:08:47.571Z",
+  "specification": {
+    "path": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/candidate.json",
+    "sha256": "d6b0a880063b794588e992221eec3b0cf129c929e0cac5855451d2ee5cdfa804",
+    "bytes": 4187
+  },
+  "artifact": {
+    "path": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+    "sha256": "a2db370872535bd314a88cf9f93396ef7748db8c6124c94ba9c40e401954587b",
+    "bytes": 833995
+  },
+  "stages": {
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "/usr/bin/node",
+        "/home/halsheikh/.claude/skills/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/candidate.json",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "d6b0a880063b794588e992221eec3b0cf129c929e0cac5855451d2ee5cdfa804",
+          "bytes": 4187
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 600,
+      "command": [
+        "/usr/bin/node",
+        "/home/halsheikh/.claude/skills/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/candidate.json",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "4df75dd5-6b6d-4412-9945-70ebba91b91e",
+        "ok": true,
+        "command": "deliver",
+        "type": "architecture",
+        "input": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/candidate.json",
+        "output": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "specification": {
+          "sha256": "d6b0a880063b794588e992221eec3b0cf129c929e0cac5855451d2ee5cdfa804",
+          "bytes": 4187
+        },
+        "artifact": {
+          "sha256": "a2db370872535bd314a88cf9f93396ef7748db8c6124c94ba9c40e401954587b",
+          "bytes": 833995
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 261,
+      "command": [
+        "/usr/bin/node",
+        "/home/halsheikh/.claude/skills/archify/bin/archify.mjs",
+        "check",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "artifact": {
+          "sha256": "a2db370872535bd314a88cf9f93396ef7748db8c6124c94ba9c40e401954587b",
+          "bytes": 833995
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "metrics": {
+            "properCrossings": 0,
+            "resolvedCrossovers": 0,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 78,
+            "desktopReadabilityIssues": 0,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 7.5,
+            "maxBends": 0,
+            "routesOverSuggestedBends": 0,
+            "maxStretch": 1,
+            "routesOverSuggestedStretch": 0,
+            "minSegmentPx": 75,
+            "minInteriorSegmentPx": null,
+            "shortSegmentCount": 0,
+            "shortEndpointSegmentCount": 0,
+            "shortInteriorSegmentCount": 0,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [],
+            "detours": []
+          },
+          "leadingSpace": {
+            "measured": true,
+            "emptyTopPx": 30,
+            "emptyTopRatio": 0.042,
+            "occupiedTop": 30,
+            "viewBoxTop": 0,
+            "canvasHeight": 708,
+            "typicalNodeHeight": 60,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "recognized-declared-wide",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 1185.9375,
+            "actualBudgetPx": 1185.9375,
+            "actualReaderWidth": 1215.9375,
+            "desiredReaderWidth": 1215.9375,
+            "viewportCap": 1376,
+            "limit": "source-size",
+            "requestedTargetPx": 7.5,
+            "requestedTargetMet": true,
+            "hardFloorPx": 6,
+            "hardFloorMet": true,
+            "minimumOwner": {
+              "kind": "edge",
+              "id": "visitor-https",
+              "from": "visitor",
+              "to": "cf-access"
+            },
+            "minimumSourceTextPx": 8,
+            "minimumProjectedTextPx": 7.5,
+            "semanticTextCount": 38
+          },
+          "issues": []
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "4df75dd5-6b6d-4412-9945-70ebba91b91e"
+      }
+    },
+    "browser-check": {
+      "status": "skipped",
+      "exitCode": 2,
+      "durationMs": 52,
+      "command": [
+        "/usr/bin/node",
+        "/home/halsheikh/.claude/skills/archify/bin/archify.mjs",
+        "browser-check",
+        "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+        "--json",
+        "--require-provenance"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "skipped",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "4df75dd5-6b6d-4412-9945-70ebba91b91e",
+        "artifact": {
+          "path": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html",
+          "sha256": "a2db370872535bd314a88cf9f93396ef7748db8c6124c94ba9c40e401954587b",
+          "bytes": 833995
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "unavailable",
+          "executable": null
+        },
+        "diagnostics": [
+          {
+            "code": "viewer/chrome-unavailable",
+            "severity": "warning",
+            "message": "No supported browser found. Install Chrome/Chromium (or Microsoft Edge), or set ARCHIFY_CHROME to its executable path.",
+            "subject": {
+              "artifact": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html"
+            },
+            "evidence": {
+              "executable": null
+            },
+            "supportedFixes": [
+              "set ARCHIFY_CHROME to a Chrome/Chromium executable (or Microsoft Edge) and rerun browser-check"
+            ]
+          }
+        ],
+        "containment": {
+          "status": "skipped",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": []
+        },
+        "themeStates": {
+          "status": "skipped",
+          "viewports": []
+        },
+        "readability": {
+          "status": "skipped",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": []
+        },
+        "viewerChrome": {
+          "status": "skipped",
+          "viewports": []
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "receipt": "homelab.browser-check.json",
+          "files": []
+        },
+        "error": "No supported browser found. Install Chrome/Chromium (or Microsoft Edge), or set ARCHIFY_CHROME to its executable path."
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [
+    {
+      "code": "viewer/chrome-unavailable",
+      "severity": "warning",
+      "message": "No supported browser found. Install Chrome/Chromium (or Microsoft Edge), or set ARCHIFY_CHROME to its executable path.",
+      "subject": {
+        "artifact": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.html"
+      },
+      "evidence": {
+        "executable": null
+      },
+      "supportedFixes": [
+        "set ARCHIFY_CHROME to a Chrome/Chromium executable (or Microsoft Edge) and rerun browser-check"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.finalize.json",
+    "summaryReceipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.finalize-summary.json",
+    "browserCheckReceipt": "/home/halsheikh/homelab/.archify/architecture-homelab-20261024-140829/homelab.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "browser-check",
+  "finishedAt": "2026-10-24T14:08:48.667Z",
+  "durationMs": 1096,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-24T14:08:47.688Z",
+    "source": "network",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

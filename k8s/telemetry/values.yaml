@@ -1,15 +1,43 @@
+alertmanagerConfig:
+  name: alertmanager-global
+  email:
+    to: alsheikhhusam@gmail.com
+    from: Homelab Alerts <alerts@husamalsheikh.com>
+    smarthost: smtp.resend.com:587
+    authUsername: resend
+    existingSecret:
+      name: resend-smtp
+      key: password
+  quietHoursUTC:
+    start: "02:00"
+    end: "13:00"
+
 pvcUsageExporter:
   enabled: true
   schedule: "*/15 * * * *"
-  image: alpine:3.20
+  image: alpine:3.24
 
 # -----------------------------------------------------------------------------
 # kube-prometheus-stack: Grafana + Prometheus + node-exporter + kube-state-metrics
 # -----------------------------------------------------------------------------
 kube-prometheus-stack:
-  # Homelab does not need paging/alert routing. Drop Alertmanager to save a pod.
+  crds:
+    upgradeJob:
+      enabled: true
+      forceConflicts: true
+
   alertmanager:
-    enabled: false
+    enabled: true
+    alertmanagerSpec:
+      alertmanagerConfiguration:
+        name: alertmanager-global
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
 
   kubeControllerManager:
     enabled: false
@@ -22,9 +50,64 @@ kube-prometheus-stack:
     disabled:
       Watchdog: true
       InfoInhibitor: true
-      PrometheusNotConnectedToAlertmanagers: true
+      KubeJobFailed: true
+
+  additionalPrometheusRulesMap:
+    cronjobs:
+      groups:
+        - name: cronjobs
+          rules:
+            - alert: CronJobNotSucceeding
+              expr: time() - kube_cronjob_status_last_successful_time > 3 * 3600
+              for: 10m
+              labels:
+                severity: warning
+              annotations:
+                summary: CronJob has not succeeded in over 3 hours.
+                description: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} last succeeded {{ $value | humanizeDuration }} ago.
+    storage:
+      groups:
+        - name: storage
+          rules:
+            - alert: DiskImageAlmostFull
+              expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/mnt/k8s/.+"} / node_filesystem_size_bytes{mountpoint=~"/mnt/k8s/.+"}) > 85
+              for: 10m
+              labels:
+                severity: warning
+              annotations:
+                summary: A reserved disk image is over 85% full.
+                description: "{{ $labels.mountpoint }} is {{ $value | printf \"%.1f\" }}% full. It is a hard cap: writes fail at 100%."
+            - alert: DiskImageFull
+              expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint=~"/mnt/k8s/.+"} / node_filesystem_size_bytes{mountpoint=~"/mnt/k8s/.+"}) > 95
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: A reserved disk image is over 95% full.
+                description: "{{ $labels.mountpoint }} is {{ $value | printf \"%.1f\" }}% full. Writes fail at 100%."
+            - alert: DiskImageNotMounted
+              expr: absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/opencloud"}) or absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/bookorbit"}) or absent(node_filesystem_size_bytes{mountpoint="/mnt/k8s/wallos"})
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: A disk image is not mounted.
+                description: "{{ $labels.mountpoint }} is not mounted (check /etc/fstab and the loop device). Its app cannot start."
+            - alert: PVCUsageExporterStale
+              expr: (time() - max(node_textfile_mtime_seconds{file=~".*/pvc_usage.prom"}) > 2700) or absent(node_textfile_mtime_seconds{file=~".*/pvc_usage.prom"}) or max(node_textfile_scrape_error) > 0
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: PVC usage data is stale or missing.
+                description: The pvc-usage-exporter has not written pvc_usage.prom in over 45 minutes (or node-exporter cannot read it), so PVC usage alerts are blind.
 
   grafana:
+    sidecar:
+      dashboards:
+        folderAnnotation: grafana_folder
+        provider:
+          foldersFromFilesStructure: true
     # Stable service name "grafana" (referenced by the Cloudflare Tunnel route).
     fullnameOverride: grafana
     # Admin credentials come from a Secret you create out-of-band (not in git):
@@ -52,17 +135,17 @@ kube-prometheus-stack:
         jsonData:
           tlsSkipVerify: true
 
-    # SMTP credentials live in the grafana-smtp secret (created out-of-band):
-    #   kubectl -n telemetry create secret generic grafana-smtp \
-    #     --from-literal=user='<smtp-user>' --from-literal=password='<smtp-pass>'
+    # SMTP credentials live in the resend-smtp secret (created out-of-band):
+    #   kubectl -n telemetry create secret generic resend-smtp \
+    #     --from-literal=user=resend --from-literal=password='<resend-api-key>'
     grafana.ini:
       smtp:
         enabled: true
-        host: smtp.gmail.com:587
-        from_address: thejimscott99@gmail.com
+        host: smtp.resend.com:587
+        from_address: alerts@husamalsheikh.com
         from_name: Homelab Grafana
     smtp:
-      existingSecret: grafana-smtp
+      existingSecret: resend-smtp
       userKey: user
       passwordKey: password
 
@@ -103,7 +186,7 @@ kube-prometheus-stack:
                 title: PVC over 90% of assigned size
                 condition: C
                 for: 10m
-                noDataState: OK
+                noDataState: Alerting
                 execErrState: OK
                 labels:
                   severity: warning
@@ -136,7 +219,7 @@ kube-prometheus-stack:
                 title: PVC over its assigned size
                 condition: C
                 for: 5m
-                noDataState: OK
+                noDataState: Alerting
                 execErrState: OK
                 labels:
                   severity: critical
@@ -169,6 +252,8 @@ kube-prometheus-stack:
   # Prometheus: modest retention + its own PVC.
   prometheus:
     prometheusSpec:
+      image:
+        tag: v3.15.1-distroless
       retention: 7d
       retentionSize: 4500MB
       storageSpec:
@@ -201,7 +286,7 @@ loki:
   # keep resolving to loki.telemetry.svc.cluster.local:3100.
   fullnameOverride: loki
 
-  deploymentMode: SingleBinary
+  deploymentMode: Monolithic
 
   loki:
     startupProbe:
@@ -252,7 +337,6 @@ loki:
   distributor: { replicas: 0 }
   compactor: { replicas: 0 }
   indexGateway: { replicas: 0 }
-  bloomCompactor: { replicas: 0 }
   bloomGateway: { replicas: 0 }
 
   # Drop the heavy extras the chart would otherwise add.
@@ -268,20 +352,18 @@ loki:
     enabled: false
   test:
     enabled: false
-  monitoring:
-    selfMonitoring:
-      enabled: false
-      grafanaAgent:
-        installOperator: false
 
 # -----------------------------------------------------------------------------
-# Alloy: log collection only (DaemonSet) -> ships pod logs to Loki.
+# Alloy: log collection only (DaemonSet) -> ships pod and kernel logs to Loki.
 # -----------------------------------------------------------------------------
 alloy:
   controller:
     type: daemonset
 
   alloy:
+    mounts:
+      varlog: true
+
     configMap:
       create: true
       content: |-
@@ -359,6 +441,28 @@ alloy:
             expression = ".*unable to upgrade connection: container not found.*"
             drop_counter_reason = "container_not_found"
           }
+        }
+
+        loki.relabel "journal" {
+          forward_to = []
+
+          rule {
+            source_labels = ["__journal__hostname"]
+            target_label  = "node"
+          }
+
+          rule {
+            source_labels = ["__journal_priority_keyword"]
+            target_label  = "level"
+          }
+        }
+
+        loki.source.journal "kernel" {
+          path          = "/var/log/journal"
+          matches       = "_TRANSPORT=kernel"
+          labels        = { job = "kernel" }
+          relabel_rules = loki.relabel.journal.rules
+          forward_to    = [loki.write.default.receiver]
         }
 
         loki.write "default" {

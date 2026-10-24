@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: cloudflared
-        image: cloudflare/cloudflared:latest
+        image: cloudflare/cloudflared:2026.10.3
         args:
         - tunnel
         - --config
@@ -25,11 +25,11 @@ spec:
         - run
         resources:
           requests:
-            cpu: 10m
-            memory: 30Mi
-          limits:
             cpu: 50m
             memory: 64Mi
+          limits:
+            cpu: 1000m
+            memory: 256Mi
         startupProbe:
           httpGet:
             path: /ready
