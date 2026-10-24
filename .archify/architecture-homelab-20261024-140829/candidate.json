@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "K8s Homelab Architecture",
+    "locale": "en",
+    "output": ".archify/architecture-homelab-20261024-140829/homelab.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "visitor", "type": "external", "label": "User", "sublabel": "browser + native apps", "pos": [40, 60], "size": [130, 60] },
+    { "id": "cf-access", "type": "security", "label": "Cloudflare Access", "sublabel": "Zero Trust login", "pos": [245, 60], "size": [130, 60] },
+    { "id": "cf-tunnel", "type": "cloud", "label": "Cloudflare Tunnel", "sublabel": "no open inbound ports", "pos": [450, 60], "size": [130, 60] },
+    { "id": "cloudflared", "type": "backend", "label": "cloudflared", "sublabel": "in-cluster connector", "pos": [655, 60], "size": [130, 60] },
+    { "id": "apps", "type": "frontend", "label": "App workloads", "sublabel": "Glance, OpenCloud +9", "pos": [860, 60], "size": [130, 60] },
+    { "id": "app-data", "type": "database", "label": "Persistent data", "sublabel": "PVCs + disk images", "pos": [1065, 60], "size": [130, 60] },
+    { "id": "grafana", "type": "frontend", "label": "Grafana", "sublabel": "dashboards as code", "pos": [655, 230], "size": [130, 60] },
+    { "id": "loki", "type": "database", "label": "Loki", "sublabel": "log store", "pos": [860, 230], "size": [130, 60] },
+    { "id": "alloy", "type": "backend", "label": "Alloy", "sublabel": "pod + kernel logs", "pos": [1065, 230], "size": [130, 60] },
+    { "id": "prometheus", "type": "backend", "label": "Prometheus", "sublabel": "node + k8s metrics", "pos": [655, 400], "size": [130, 60] },
+    { "id": "alertmanager", "type": "messagebus", "label": "Alertmanager", "sublabel": "routes alerts", "pos": [860, 400], "size": [130, 60] },
+    { "id": "inbox", "type": "external", "label": "Email inbox", "sublabel": "via Resend SMTP", "pos": [860, 580], "size": [130, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Cloudflare edge", "wraps": ["cf-access", "cf-tunnel"] },
+    { "kind": "region", "label": "k3s single node · OptiPlex 7050", "wraps": ["cloudflared", "apps", "app-data", "grafana", "loki", "alloy", "prometheus", "alertmanager"] },
+    { "kind": "security-group", "label": "telemetry namespace", "wraps": ["grafana", "loki", "alloy", "prometheus", "alertmanager"] }
+  ],
+  "connections": [
+    { "id": "visitor-https", "from": "visitor", "to": "cf-access", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "access-allowed", "from": "cf-access", "to": "cf-tunnel", "label": "allowed", "variant": "security" },
+    { "id": "tunnel-proxy", "from": "cf-tunnel", "to": "cloudflared", "label": "proxied", "variant": "emphasis" },
+    { "id": "cloudflared-apps", "from": "cloudflared", "to": "apps", "label": "ClusterIP", "variant": "emphasis" },
+    { "id": "apps-data", "from": "apps", "to": "app-data", "label": "R/W" },
+    { "id": "cloudflared-grafana", "from": "cloudflared", "to": "grafana", "label": "dashboards" },
+    { "id": "grafana-loki", "from": "grafana", "to": "loki", "label": "LogQL" },
+    { "id": "alloy-loki", "from": "alloy", "to": "loki", "label": "push" },
+    { "id": "grafana-prometheus", "from": "grafana", "to": "prometheus", "label": "PromQL" },
+    { "id": "prometheus-alerts", "from": "prometheus", "to": "alertmanager", "label": "alerts" },
+    { "id": "alertmanager-email", "from": "alertmanager", "to": "inbox", "label": "SMTP", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Edge and access", "items": ["Web apps sit behind Cloudflare Access", "OpenCloud, Obsidian, ONLYOFFICE and BookOrbit bypass Access and use their own login", "SSH uses a separate host-level tunnel"] },
+    { "dot": "emerald", "title": "Cluster", "items": ["Single-node k3s, Traefik disabled", "Every app is a Helm release in its own namespace", "PostgreSQL, CouchDB, SQLite and H2 on local-path or capped disk images", "No backups yet (K8up planned)"] },
+    { "dot": "cyan", "title": "Observability", "items": ["Prometheus scrapes node and Kubernetes metrics", "Alloy ships pod and kernel logs to Loki", "Grafana storage alerts also email via Resend"] }
+  ]
+}
