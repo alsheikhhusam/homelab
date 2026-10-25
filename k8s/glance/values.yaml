@@ -165,6 +165,12 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# Host webhook behind the Jobs widget (homelab-jobs-webhook.service); Cloudflare routes home/jobs/* here.
+jobs:
+  enabled: true
+  hostIP: 192.168.1.46
+  port: 8099
+
 # Additional volumes on the output Deployment definition.
 feeds:
   enabled: true
