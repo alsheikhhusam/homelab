@@ -1,6 +1,6 @@
 // Jobs widget: renders into [data-jobs-widget] from the host's webhook
 // (/jobs/status, routed by Cloudflare to homelab-jobs-webhook on the host).
-// Toggles start/stop long-running units (green = running, gray = off);
+// Toggles turn long-running units or script jobs on/off (green = on, gray = off);
 // buttons start one-off units and show the last run's result.
 (function () {
   "use strict";
@@ -82,7 +82,7 @@
       if (j.kind === "toggle") {
         if (j.state === "active") {
           line.className = "size-h6 color-positive";
-          line.textContent = "Running";
+          line.textContent = "On";
           if (j.started) line.append(" · ", since(j.started));
           if (j.url) {
             line.appendChild(document.createTextNode(" · "));
@@ -93,6 +93,7 @@
         } else if (j.state === "activating") line.textContent = "Starting…";
         else if (j.state === "deactivating") line.textContent = "Stopping…";
         else if (j.state === "failed") { line.className = "size-h6 color-negative"; line.textContent = "Failed"; }
+        else if (j.state === "error") { line.className = "size-h6 color-negative"; line.textContent = "Unavailable"; }
         else line.textContent = "Off";
       } else if (busy(j)) {
         line.className = "size-h6 color-primary";
@@ -112,7 +113,7 @@
         t.title = on ? "Turn off" : "Turn on";
         t.setAttribute("role", "switch");
         t.setAttribute("aria-checked", on ? "true" : "false");
-        t.disabled = wait;
+        t.disabled = wait || j.state === "error";
         t.addEventListener("click", function () { act(j, on ? "stop" : "start"); });
         return t;
       }
@@ -131,7 +132,7 @@
         var left = el("div", "flex items-center min-width-0");
         var dot = el("span", "jw-dot");
         if (j.state === "active" || j.state === "activating") dot.classList.add("on");
-        else if (j.state === "failed" || (j.kind === "button" && j.finished && j.result !== "success")) dot.classList.add("bad");
+        else if (j.state === "failed" || j.state === "error" || (j.kind === "button" && j.finished && j.result !== "success")) dot.classList.add("bad");
         var text = el("div", "min-width-0");
         text.appendChild(el("div", "color-highlight text-truncate", j.label));
         text.appendChild(status(j));

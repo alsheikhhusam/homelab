@@ -224,3 +224,10 @@ config:
     commafeed.database.cleanup.entries-max-age=7D
     commafeed.database.cleanup.max-feed-capacity=100
     commafeed.database.cleanup.statuses-max-age=7D
+
+    commafeed.http-client.block-local-addresses=false
+    commafeed.http-client.socket-timeout=30s
+    commafeed.http-client.response-timeout=30s
+
+    quarkus.http.filter.custom-code.header."Cache-Control"=no-store
+    quarkus.http.filter.custom-code.matches=/custom_.+
