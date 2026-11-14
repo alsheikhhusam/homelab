@@ -134,7 +134,7 @@ affinity: {}
 
 postgres:
   enabled: true
-  image: postgres:17.11
+  image: postgres:17.12
   user: planka
   database: planka
   existingSecret: planka-db
