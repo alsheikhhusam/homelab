@@ -3,4 +3,4 @@ name: opencloud
 description: OpenCloud file sync and share, single-binary deployment with the built-in IDP
 type: application
 version: 0.1.0
-appVersion: "7.2.4"
+appVersion: "7.2.5"

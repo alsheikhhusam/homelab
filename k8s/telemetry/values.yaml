@@ -252,8 +252,6 @@ kube-prometheus-stack:
   # Prometheus: modest retention + its own PVC.
   prometheus:
     prometheusSpec:
-      image:
-        tag: v3.15.1-distroless
       retention: 7d
       retentionSize: 4500MB
       storageSpec:
@@ -345,8 +343,6 @@ loki:
   chunksCache:
     enabled: false
   resultsCache:
-    enabled: false
-  minio:
     enabled: false
   lokiCanary:
     enabled: false

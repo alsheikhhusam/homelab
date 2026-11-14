@@ -9,6 +9,7 @@ document:
     <script src="/assets/prayer-widget.js?v=__ASSETS_VERSION__" defer></script>
     <script src="/assets/tab-reorder.js?v=__ASSETS_VERSION__" defer></script>
     <script src="/assets/ayah-banner.js?v=__ASSETS_VERSION__" defer></script>
+    <script src="/assets/jobs-widget.js?v=__ASSETS_VERSION__" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@700&display=swap">
 
 pages:
@@ -36,6 +37,7 @@ pages:
                   <div class="widget-small-content-bounds">
                     <div data-hijri-calendar></div>
                   </div>
+          - type: to-do
 
       - size: full
         widgets:
@@ -209,7 +211,10 @@ pages:
                   "/":
                     name: Disk
                     hide: false
-          - type: to-do
+          - type: custom-api
+            title: Jobs
+            template: |
+              <div data-jobs-widget></div>
           - type: custom-api
             title: Alerts
             title-url: https://grafana.husamalsheikh.com/alerting/list
@@ -259,7 +264,7 @@ pages:
                   {{ if eq (len (.Array `rules.#(state=="firing")#|#(labels.severity!="info")#`)) 0 }}
                     <li class="flex justify-between items-center gap-10">
                       <span class="text-truncate">{{ .String "name" }}</span>
-                      <span class="color-positive shrink-0">All clear</span>
+                      <span class="color-positive shrink-0">CLEAR</span>
                     </li>
                   {{ end }}
                 {{ end }}
@@ -268,7 +273,7 @@ pages:
                   {{ if eq (len (.Array `rules.#(state=="firing")#|#(labels.severity!="info")#`)) 0 }}
                     <li class="flex justify-between items-center gap-10">
                       <span class="text-truncate">{{ .String "name" }}</span>
-                      <span class="color-positive shrink-0">All clear</span>
+                      <span class="color-positive shrink-0">CLEAR</span>
                     </li>
                   {{ end }}
                 {{ end }}
